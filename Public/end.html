@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Ended - Fintech Super App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0px 4px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+            margin: auto;
+            margin-bottom: 1rem;
+        }
+        .btn-custom {
+            background: #007bff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: 0.3s;
+            color: white;
+        }
+        .btn-custom:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        .details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: left;
+            border: 1px solid #e1e5eb;
+        }
+        .icon {
+            font-size: 1.4rem;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        a {
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="avatar" id="userAvatar"><i class="bi bi-person"></i></div>
+        <h2 id="userName">User</h2>
+        <p id="userEmail" class="text-muted">example@email.com</p>
+
+        <div>
+            <i class="bi bi-shield-lock-fill icon text-primary"></i>
+            <h4>Session Ended</h4>
+            <p id="logoutReason">Your session has ended for security reasons.</p>
+        </div>
+
+        <div class="details">
+            <p><i class="bi bi-clock-history text-warning"></i> Last active: <span id="lastActive">Unknown</span></p>
+            <p><i class="bi bi-calendar-event text-success"></i> Session started: <span id="sessionStart">Unknown</span></p>
+            <p><i class="bi bi-info-circle text-primary"></i> Reason: <span id="reasonDetail">Manual Logout</span></p>
+        </div>
+
+        <button onclick="redirectToLogin()" class="btn btn-custom mt-3 w-100">
+            <i class="bi bi-box-arrow-in-right"></i> Login Again
+        </button>
+
+        <hr>
+
+        <div>
+            <a href="/help.html" class="text-primary"><i class="bi bi-question-circle"></i> Help Center</a> •
+            <a href="/contact.html" class="text-primary"><i class="bi bi-envelope"></i> Contact Support</a> •
+            <a href="/" class="text-primary"><i class="bi bi-house"></i> Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Load user info from localStorage
+        const user = JSON.parse(localStorage.getItem("user")) || {};
+        if (user.firstName && user.lastName) {
+            document.getElementById("userName").innerText = `${user.firstName} ${user.lastName}`;
+        }
+        if (user.email) {
+            document.getElementById("userEmail").innerText = user.email;
+        }
+        if (user.firstName) {
+            document.getElementById("userAvatar").innerHTML = user.firstName.charAt(0).toUpperCase();
+        }
+
+        // Load session info from localStorage
+        document.getElementById("lastActive").innerText = localStorage.getItem("lastActive") || "Unknown";
+        document.getElementById("sessionStart").innerText = localStorage.getItem("sessionStart") || "Unknown";
+        document.getElementById("reasonDetail").innerText = localStorage.getItem("logoutReason") || "Manual Logout";
+        document.getElementById("logoutReason").innerText = 
+            `Your session ended due to: ${localStorage.getItem("logoutReason") || "manual logout"}.`;
+
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

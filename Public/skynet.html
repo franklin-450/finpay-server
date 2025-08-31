@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SkyNet Admin — HTML/CSS/JS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0f16; --bg-2:#0f1521; --card:#121a28; --muted:#8aa0b4; --text:#e8f1fb; --brand:#4ea8ff; --ok:#22c55e; --warn:#fbbf24; --err:#ef4444; --border:#1f2a3a;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text)}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:linear-gradient(135deg,var(--brand),#7ad3ff);box-shadow:var(--shadow)}
+    .title{font-weight:800;letter-spacing:.3px}
+    .subtitle{color:var(--muted);font-size:12px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+    .card h2{margin:0 0 10px;font-size:16px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .spacer{height:8px}
+
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px}
+    .btn{appearance:none;border:none;border-radius:10px;padding:10px 14px;background:var(--brand);color:#00101d;font-weight:700;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+    .btn:hover{filter:brightness(1.08)}
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .btn.ok{background:var(--ok);color:#02150a}
+    .btn.err{background:var(--err)}
+
+    .input,.select,textarea{width:100%;padding:12px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text)}
+    .input::placeholder{color:#6f8297}
+    label{font-size:12px;color:var(--muted)}
+
+    .list{display:flex;flex-direction:column;gap:12px;max-height:420px;overflow:auto;padding-right:4px}
+    .item{display:grid;grid-template-columns:1fr auto;gap:12px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));padding:12px;border-radius:14px}
+    .item .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+    .code{background:#0c131e;border:1px solid #1b2738;border-radius:10px;padding:10px;overflow:auto;max-height:160px}
+
+    .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0c1928;border:1px solid #193049;border-radius:8px;padding:4px 6px;color:#a7c7e7}
+    .badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--border)}
+    .badge.ok{background:rgba(34,197,94,.15);border-color:#25633b}
+    .badge.err{background:rgba(239,68,68,.15);border-color:#6d2222}
+    .badge.warn{background:rgba(251,191,36,.15);border-color:#6e4f1a}
+
+    .footer{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;margin-top:18px}
+
+    .table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+    .table th{background:#0f1623;color:#9fb2c6;font-weight:600}
+    .table tr:hover td{background:rgba(255,255,255,.02)}
+
+    .hint{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">🤖</div>
+        <div>
+          <div class="title">SkyNet Admin</div>
+          <div class="subtitle">HTML • CSS • JavaScript (no framework)</div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="pill" id="apiBasePill">API: <span id="apiBaseText"></span></span>
+        <button class="btn ghost" id="refreshBtn">Refresh</button>
+        <button class="btn" id="testActionBtn">Trigger Test Action</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: Approvals & Actions -->
+      <section class="card">
+        <h2>Pending Approvals</h2>
+        <div class="list" id="approvalsList"></div>
+      </section>
+
+      <!-- Right: Create Action / Health / Agents -->
+      <section class="card">
+        <h2>Create Action</h2>
+        <div class="row">
+          <div style="flex:1">
+            <label>Agent</label>
+            <input class="input" id="inAgent" placeholder="payments-orchestrator" value="payments-orchestrator" />
+          </div>
+          <div style="flex:1">
+            <label>Capability</label>
+            <input class="input" id="inCapability" placeholder="payments:initiate" value="payments:initiate" />
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <label>Payload (JSON)</label>
+        <textarea class="input" id="inPayload" rows="6">{
+  "amount": 1200,
+  "otp": true,
+  "msisdn": "2547XXXXXXX"
+}</textarea>
+        <div class="spacer"></div>
+        <button class="btn" id="sendActionBtn">Send Action</button>
+        <span class="hint" id="actionHint"></span>
+
+        <div class="spacer"></div>
+        <hr style="border-color:var(--border);opacity:.4" />
+        <div class="spacer"></div>
+
+        <h2>System</h2>
+        <div class="row">
+          <span class="badge warn" id="healthBadge">Checking health…</span>
+          <span class="pill" id="timePill"></span>
+        </div>
+
+        <div class="spacer"></div>
+        <h2>Registered Agents</h2>
+        <table class="table" id="agentsTable">
+          <thead>
+            <tr><th>Name</th><th>Scopes</th><th>Risk Default</th><th>Created</th></tr>
+          </thead>
+          <tbody id="agentsTbody">
+            <tr><td colspan="4" class="hint">No data yet.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="footer">
+      <div>© SkyNet Orchestration • Secure-by-default</div>
+      <div>
+        <span class="hint">Keyboard: <span class="kbd">R</span> refresh • <span class="kbd">T</span> test action</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Config ======
+    const API_BASE = localStorage.getItem('skynet_api') || 'http://localhost:8080';
+    const qs = (s,root=document)=>root.querySelector(s);
+    const qsa = (s,root=document)=>[...root.querySelectorAll(s)];
+
+    const state = {
+      approvals: [],
+      agents: []
+    };
+
+    // ====== Utilities ======
+    const uuid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8);return v.toString(16);
+    });
+
+    const pretty = (obj)=>JSON.stringify(obj, null, 2);
+
+    const toast = (msg, kind='info') => {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.padding='12px 14px';
+      t.style.border='1px solid var(--border)'; t.style.borderRadius='10px'; t.style.background='rgba(255,255,255,.06)';
+      t.style.color='var(--text)'; t.style.boxShadow='var(--shadow)';
+      if(kind==='ok') t.style.borderColor = '#25633b';
+      if(kind==='err') t.style.borderColor = '#6d2222';
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(), 2600);
+    };
+
+    const setBadge = (el, text, kind='warn') => {
+      el.textContent = text;
+      el.className = 'badge ' + (kind==='ok'?'ok':kind==='err'?'err':'warn');
+    };
+
+    // ====== Rendering ======
+    function renderApprovals(){
+      const wrap = qs('#approvalsList');
+      wrap.innerHTML = '';
+      if(!state.approvals.length){
+        wrap.innerHTML = `<div class="hint">No pending approvals.</div>`;
+        return;
+      }
+      state.approvals.forEach(a=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div>
+            <div class="meta">
+              <span class="badge warn">PENDING</span>
+              <span class="pill"><b>Capability:</b> ${a.capability}</span>
+              <span class="pill"><b>Risk:</b> ${a.riskScore}</span>
+              <span class="pill"><b>Trace:</b> ${a.traceId?.slice(0,8) ?? '—'}</span>
+            </div>
+            <div class="code"><code>${pretty(a.payload)}</code></div>
+          </div>
+          <div class="row">
+            <button class="btn ok" data-approve="${a.id}">Approve</button>
+            <button class="btn err" data-deny="${a.id}">Deny</button>
+          </div>`;
+        wrap.appendChild(div);
+      });
+
+      // wire buttons
+      qsa('[data-approve]').forEach(b=>b.addEventListener('click',()=>decideAction(b.dataset.approve,'APPROVE')));
+      qsa('[data-deny]').forEach(b=>b.addEventListener('click',()=>decideAction(b.dataset.deny,'DENY')));
+    }
+
+    function renderAgents(){
+      const tbody = qs('#agentsTbody');
+      tbody.innerHTML = '';
+      if(!state.agents.length){
+        tbody.innerHTML = `<tr><td colspan="4" class="hint">No agents found.</td></tr>`;
+        return;
+      }
+      state.agents.forEach(ag=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${ag.name}</td><td>${ag.scopes?.join(', ')||'—'}</td><td>${ag.riskDefault?.toFixed?.(2) ?? '—'}</td><td>${new Date(ag.createdAt).toLocaleString()}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ====== API ======
+    async function apiGET(path){
+      const r = await fetch(`${API_BASE}${path}`);
+      if(!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    }
+
+    async function apiPOST(path, body){
+      const r = await fetch(`${API_BASE}${path}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+      if(!r.ok){
+        const t = await r.text();
+        throw new Error(`${r.status} ${r.statusText} — ${t}`);
+      }
+      return r.json();
+    }
+
+    // Backend compatibility helpers (works with the Control Plane you have)
+    async function loadApprovals(){
+      try{ state.approvals = await apiGET('/api/approvals/pending'); renderApprovals(); }
+      catch(e){ toast('Failed to load approvals','err'); console.error(e); }
+    }
+
+    // This endpoint is not in the minimal CP sample; if 404, we degrade gracefully
+    async function loadAgents(){
+      try{ state.agents = await apiGET('/api/agents'); renderAgents(); }
+      catch(e){ state.agents = []; renderAgents(); }
+    }
+
+    async function decideAction(id, decision){
+      try{
+        await apiPOST(`/api/actions/${id}/decision`, { decision, approver: 'admin@skynet.local' });
+        toast(decision==='APPROVE'?'Approved ✅':'Denied ⛔','ok');
+        await loadApprovals();
+      }catch(e){ toast('Decision failed','err'); console.error(e); }
+    }
+
+    async function sendAction(){
+      const agent = qs('#inAgent').value.trim();
+      const capability = qs('#inCapability').value.trim();
+      let payload; try{ payload = JSON.parse(qs('#inPayload').value); } catch(e){ toast('Invalid JSON payload','err'); return; }
+      const traceId = uuid();
+      qs('#actionHint').textContent = 'Sending…';
+      try{
+        const res = await apiPOST('/api/actions', { agent, capability, payload, traceId });
+        qs('#actionHint').textContent = `Action ${res.actionId} → ${res.status}`;
+        toast('Action submitted','ok');
+        await loadApprovals();
+      }catch(e){
+        qs('#actionHint').textContent = 'Error';
+        toast('Failed to send action','err');
+        console.error(e);
+      }
+    }
+
+    async function checkHealth(){
+      const badge = qs('#healthBadge');
+      try{
+        const h = await apiGET('/api/health');
+        if(h.status==='ok') setBadge(badge,'Healthy','ok'); else setBadge(badge,'Degraded','warn');
+      }catch(e){ setBadge(badge,'Offline','err'); }
+    }
+
+    // ====== Boot ======
+    function tickClock(){ qs('#timePill').textContent = new Date().toLocaleString(); }
+
+    function boot(){
+      qs('#apiBaseText').textContent = API_BASE;
+      qs('#refreshBtn').addEventListener('click', refreshAll);
+      qs('#testActionBtn').addEventListener('click', ()=>{
+        qs('#inAgent').value = 'payments-orchestrator';
+        qs('#inCapability').value = 'payments:initiate';
+        qs('#inPayload').value = pretty({ amount: 1200, otp: true, msisdn: '2547XXXXXXX' });
+        sendAction();
+      });
+      qs('#sendActionBtn').addEventListener('click', sendAction);
+
+      document.addEventListener('keydown', (e)=>{
+        if(e.key.toLowerCase()==='r') refreshAll();
+        if(e.key.toLowerCase()==='t') qs('#testActionBtn').click();
+      });
+
+      refreshAll();
+      setInterval(tickClock, 1000);
+    }
+
+    async function refreshAll(){
+      await Promise.all([checkHealth(), loadApprovals(), loadAgents()]);
+    }
+
+    boot();
+  </script>
+</body>
+</html>

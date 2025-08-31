@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Transactions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .navbar {
+      background: #343a40;
+    }
+    .navbar-brand, .nav-link {
+      color: #fff !important;
+    }
+    .table-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+    .status-success {
+      color: green;
+      font-weight: bold;
+    }
+    .status-failed {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fas fa-lock"></i> Admin Panel</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-download"></i> Downloads</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Container -->
+  <div class="container">
+    <div class="table-container">
+      <h3><i class="fas fa-receipt"></i> Transactions</h3>
+      <table class="table table-striped table-hover mt-3">
+        <thead class="table-dark">
+          <tr>
+            <th><i class="fas fa-hashtag"></i> Transaction ID</th>
+            <th><i class="fas fa-phone"></i> Phone</th>
+            <th><i class="fas fa-coins"></i> Amount</th>
+            <th><i class="fas fa-file-alt"></i> File</th>
+            <th><i class="fas fa-clock"></i> Time</th>
+            <th><i class="fas fa-check-circle"></i> Status</th>
+          </tr>
+        </thead>
+        <tbody id="transactionTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    async function loadTransactions() {
+      try {
+        const res = await axios.get('/api/transactions');
+        const tbody = document.getElementById('transactionTable');
+        tbody.innerHTML = '';
+        res.data.forEach(tx => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${tx.transactionId || '-'}</td>
+            <td>${tx.phone || '-'}</td>
+            <td>$${tx.amount || 0}</td>
+            <td>${tx.file || '-'}</td>
+            <td>${tx.timestamp || '-'}</td>
+            <td class="${tx.status === 'Success' ? 'status-success' : 'status-failed'}">
+              ${tx.status}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error fetching transactions:', err);
+      }
+    }
+
+    loadTransactions();
+    setInterval(loadTransactions, 10000); // auto refresh every 10s
+  </script>
+</body>
+</html>

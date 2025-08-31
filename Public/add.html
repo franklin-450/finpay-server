@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Money - Fintech Super App</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .payment-option {
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+        border-radius: 15px;
+    }
+    .payment-option:hover, .payment-option.active {
+        border-color: #00d4ff;
+        background: rgba(0, 212, 255, 0.1);
+        transform: scale(1.03);
+    }
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: none;
+        color: white;
+    }
+    .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+    }
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        box-shadow: none;
+    }
+    label {
+        font-weight: 500;
+    }
+    .btn-primary {
+        background: #00d4ff;
+        border: none;
+    }
+    .btn-primary:hover {
+        background: #00aacc;
+    }
+</style>
+</head>
+<body>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">💳 Add Money</h2>
+    <div class="row g-3 mb-4 text-center">
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="mpesa">
+                <i class="bi bi-phone-fill fs-1"></i>
+                <p class="mt-2">M-Pesa</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="paypal">
+                <i class="bi bi-paypal fs-1"></i>
+                <p class="mt-2">PayPal</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="card">
+                <i class="bi bi-credit-card-2-front-fill fs-1"></i>
+                <p class="mt-2">Card</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="crypto">
+                <i class="bi bi-currency-bitcoin fs-1"></i>
+                <p class="mt-2">Crypto</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="bank">
+                <i class="bi bi-bank fs-1"></i>
+                <p class="mt-2">Bank Transfer</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="p-3 payment-option" data-method="airtel">
+                <i class="bi bi-phone-vibrate fs-1"></i>
+                <p class="mt-2">Airtel Money</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="paymentFormContainer"></div>
+</div>
+
+<script>
+const forms = {
+    mpesa: `
+        <div class="card p-4">
+            <h5>M-Pesa Payment</h5>
+            <label>Amount (KES)</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>Phone Number</label>
+            <input type="tel" class="form-control mb-3" placeholder="07XXXXXXXX">
+            <button class="btn btn-primary w-100">Pay via M-Pesa</button>
+        </div>
+    `,
+    paypal: `
+        <div class="card p-4">
+            <h5>PayPal Payment</h5>
+            <label>Amount (USD)</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>PayPal Email</label>
+            <input type="email" class="form-control mb-3" placeholder="example@email.com">
+            <button class="btn btn-primary w-100">Pay via PayPal</button>
+        </div>
+    `,
+    card: `
+        <div class="card p-4">
+            <h5>Card Payment</h5>
+            <label>Amount</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>Card Number</label>
+            <input type="text" class="form-control mb-2" placeholder="XXXX XXXX XXXX XXXX">
+            <label>Expiry Date</label>
+            <input type="month" class="form-control mb-2">
+            <label>CVV</label>
+            <input type="number" class="form-control mb-3" placeholder="123">
+            <button class="btn btn-primary w-100">Pay via Card</button>
+        </div>
+    `,
+    crypto: `
+        <div class="card p-4">
+            <h5>Crypto Payment</h5>
+            <label>Amount (USD)</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>Crypto Wallet Address</label>
+            <input type="text" class="form-control mb-3" placeholder="Enter wallet address">
+            <button class="btn btn-primary w-100">Pay via Crypto</button>
+        </div>
+    `,
+    bank: `
+        <div class="card p-4">
+            <h5>Bank Transfer</h5>
+            <label>Amount</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>Account Number</label>
+            <input type="text" class="form-control mb-2" placeholder="Enter account number">
+            <label>Bank Name</label>
+            <input type="text" class="form-control mb-3" placeholder="Enter bank name">
+            <button class="btn btn-primary w-100">Pay via Bank</button>
+        </div>
+    `,
+    airtel: `
+        <div class="card p-4">
+            <h5>Airtel Money Payment</h5>
+            <label>Amount (KES)</label>
+            <input type="number" class="form-control mb-2" placeholder="Enter amount">
+            <label>Phone Number</label>
+            <input type="tel" class="form-control mb-3" placeholder="07XXXXXXXX">
+            <button class="btn btn-primary w-100">Pay via Airtel</button>
+        </div>
+    `
+};
+
+document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+        this.classList.add('active');
+        const method = this.getAttribute('data-method');
+        document.getElementById('paymentFormContainer').innerHTML = forms[method];
+    });
+});
+</script>
+
+</body>
+</html>

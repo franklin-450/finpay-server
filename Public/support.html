@@ -1,0 +1,36 @@
+===== support.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Support</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="support.html"><i data-feather="help-circle"></i> Support</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Support</h2></div>
+      <div class="card">
+        <h3>Open a Ticket</h3>
+        <input id="ticketSubject" class="input" placeholder="Subject">
+        <textarea id="ticketBody" class="input" placeholder="Describe your issue" style="min-height:120px"></textarea>
+        <div style="margin-top:12px"><button class="btn primary" onclick="submitTicket()">Submit Ticket</button></div>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>

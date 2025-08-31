@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scheme Hub - Buy & Download</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- System Theme (light/dark) via CSS variables.
+       UI layout, wording, and card structure remain unchanged. -->
+  <style>
+    :root {
+      --bg1: #f6f7fb;
+      --bg2: #e9ecf3;
+      --bg3: #dfe5f2;
+      --text: #0b1726;
+      --muted: #455a64;
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(0, 0, 0, 0.06);
+      --input-bg: #ffffff;
+      --input-border: #cfd8dc;
+      --primary-accent: #1976d2;
+      --warn: #ffa000;
+      --success: #2e7d32;
+      --btn-disabled: #999;
+      --glass-blur: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg1: #1a1a2e;
+        --bg2: #16213e;
+        --bg3: #0f3460;
+        --text: #f1f1f1;
+        --muted: #cfd8dc;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --input-bg: #263238;
+        --input-border: #455a64;
+        --primary-accent: #90caf9;
+        --warn: #ffca28;
+        --success: #81c784;
+        --btn-disabled: #999;
+        --glass-blur: 10px;
+      }
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      color: var(--text);
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-attachment: fixed;
+      background-size: cover;
+      background-repeat: no-repeat;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      backdrop-filter: blur(var(--glass-blur));
+      color: var(--text);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      min-height: 280px;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .card h5 {
+      color: var(--primary-accent);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .btn-pay {
+      background-color: #00c853;
+      color: white;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-pay:hover {
+      background-color: #00e676;
+    }
+
+    .btn-download {
+      background-color: #2962ff;
+      color: white;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-download:hover {
+      background-color: #448aff;
+    }
+
+    .btn:disabled {
+      background-color: var(--btn-disabled) !important;
+      cursor: not-allowed;
+    }
+
+    input.form-control {
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text);
+      border-radius: 0.5rem;
+    }
+
+    input.form-control::placeholder {
+      color: #b0bec5;
+    }
+
+    .hero-overlay {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      padding: 4rem 2rem;
+      text-align: center;
+      border-radius: 20px;
+      margin: 3rem auto 2rem;
+      max-width: 800px;
+      color: #ffffff;
+    }
+
+    .hero-overlay h1,
+    .hero-overlay p {
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .hero-overlay h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-overlay p {
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+      padding: 2rem 1rem;
+      margin-top: 2rem;
+    }
+
+    body.sidebar-open::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      z-index: 1040;
+    }
+
+    /* Background rotator layer */
+    .background-slide {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: -1;
+      transition: background-image 0.6s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader (unchanged visuals/wording) -->
+  <div id="preloader" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    transition: opacity 0.5s ease;
+  ">
+    <div style="
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #0dcaf0;
+      animation: spinText 2s linear infinite;
+    ">
+      SCHEME HUB
+    </div>
+
+    <div id="quote" style="
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #555;
+      text-align: center;
+      max-width: 300px;
+      padding: 10px;
+    "></div>
+
+    <div class="spinner-border text-info mt-4" style="width: 3rem; height: 3rem;" role="status"></div>
+  </div>
+
+  <style>
+    @keyframes spinText {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    // Preloader quotes (unchanged copy)
+    const quotes = [
+      "Success starts with preparation. You're already ahead!",
+      "Greatness begins with a single step.",
+      "Dream big. Work smart. Stay humble.",
+      "Every challenge is an opportunity to grow.",
+      "Your only limit is your mindset.",
+      "Start now. Perfection comes with progress.",
+      "The future belongs to those who prepare today.",
+      "Discipline is the bridge between goals and achievement.",
+      "Push yourself. No one else is going to do it for you.",
+      "You were born to do more than just exist."
+    ];
+
+    window.addEventListener('load', () => {
+      const quoteElement = document.getElementById('quote');
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteElement.textContent = `"${randomQuote}"`;
+
+      setTimeout(() => {
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => preloader.remove(), 500);
+        }
+      }, 5000);
+    });
+  </script>
+
+  <div class="background-slide" id="background-slide"></div>
+
+  <!-- Sidebar (UI unchanged) -->
+  <div id="sidebar" class="position-fixed top-0 start-0 vh-100 bg-dark text-white p-3 d-flex flex-column"
+    style="width: 250px; z-index: 1050; transform: translateX(-100%); transition: transform 0.3s ease-in-out;">
+    <h4 class="mb-4">📁 Menu</h4>
+    <button class="btn btn-outline-light btn-sm mb-2" onclick="filterByClass('6')">
+      <i class="bi bi-funnel-fill me-1"></i> Grade 6
+    </button>
+    <button class="btn btn-outline-light btn-sm mb-2" onclick="filterByClass('7')">
+      <i class="bi bi-funnel-fill me-1"></i> Grade 7
+    </button>
+    <button class="btn btn-outline-light btn-sm mb-2" onclick="filterByClass('8')">
+      <i class="bi bi-funnel-fill me-1"></i> Grade 8
+    </button>
+    <button class="btn btn-outline-light btn-sm mb-4" onclick="filterByClass('9')">
+      <i class="bi bi-funnel-fill me-1"></i> Grade 9
+    </button>
+    <button class="btn btn-outline-info btn-sm mt-auto" onclick="loadMyDownloadsToggle()">
+      <i class="bi bi-folder-check me-1"></i> My Downloads
+    </button>
+    <button class="btn btn-outline-secondary btn-sm mb-4" onclick="loadSchemes()">
+      <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
+    </button>
+  </div>
+
+  <!-- Toggle Button (unchanged) -->
+  <button id="toggleSidebar" class="btn btn-primary position-fixed top-0 start-0 m-2" onclick="toggleSidebar()"
+    style="z-index: 1100;">
+    <i class="bi bi-list"></i> Menu
+  </button>
+
+  <!-- Hero (unchanged copy/layout) -->
+  <div class="hero-overlay text-white">
+    <h1 data-aos="fade-down">📚 Learning Resource Hub</h1>
+    <p data-aos="fade-up">Buy your package before downloading – powered by Fintech Super Companies</p>
+    <div class="alert alert-info text-dark text-center" role="alert">
+      💸 Pay KES 100 via M-Pesa Send Money To <strong>0798927321</strong> Name 'Granet Mayaka' and get verified within 24hrs  <br>
+      Then send the <strong>Transaction Code eg ( QIHEWYI7I ) </strong> & your email to <a href="https://wa.me/254798927321" target="_blank">WhatsApp here</a> to get verified.
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+      <input type="text" id="searchBox" class="form-control form-control-lg"
+        placeholder="🔍 Search by title, subject or class..." oninput="filterSchemes()">
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="text-center mb-4" data-aos="fade-up">🛍 Available Schemes</h2>
+    <div class="row" id="scheme-list"></div>
+
+    <h2 class="text-center my-5" data-aos="fade-up">📝 Revision Papers</h2>
+    <div class="row" id="revision-list"></div>
+  </div>
+
+  <footer>
+    Powered by <strong>Fintech & Edutech</strong> — A Franklin's Product
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script>
+    AOS.init();
+
+    // ---------------- Background Rotation (unchanged behavior) ----------------
+    const unsplashImages = [
+      'https://source.unsplash.com/featured/?school',
+      'https://source.unsplash.com/featured/?education',
+      'https://source.unsplash.com/featured/?students',
+      'https://source.unsplash.com/featured/?classroom',
+      'https://source.unsplash.com/featured/?books',
+      'https://source.unsplash.com/featured/?library',
+      'https://source.unsplash.com/featured/?onlinelearning'
+    ];
+
+    let imgIndex = 0;
+    const backgroundDiv = document.getElementById('background-slide');
+
+    function preloadImages(urls, callback) {
+      let loaded = 0;
+      urls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+        img.onload = img.onerror = () => {
+          if (++loaded === urls.length) callback();
+        };
+      });
+    }
+
+    preloadImages(unsplashImages, () => {
+      backgroundDiv.style.backgroundImage = `url('${unsplashImages[imgIndex]}')`;
+      setInterval(() => {
+        imgIndex = (imgIndex + 1) % unsplashImages.length;
+        backgroundDiv.style.backgroundImage = `url('${unsplashImages[imgIndex]}')`;
+      }, 5000);
+    });
+
+    // ---------------- Helpers ----------------
+    function toMSISDN(raw) {
+      if (!raw) return null;
+      let p = ('' + raw).replace(/\D/g, '').trim();
+      if (p.startsWith('07') && p.length === 10) p = '254' + p.slice(1);
+      if (p.startsWith('01') && p.length === 10) p = '254' + p.slice(1);
+      if (p.startsWith('254') && p.length === 12) return p;
+      return null;
+    }
+
+    // Basic UI helpers (added, no visual changes)
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      const open = sb.style.transform === 'translateX(0px)';
+      sb.style.transform = open ? 'translateX(-100%)' : 'translateX(0)';
+      document.body.classList.toggle('sidebar-open', !open);
+    }
+
+    function filterByClass(grade) {
+      const cards = document.querySelectorAll('#scheme-list .col-md-4, #revision-list .col-md-4');
+      cards.forEach(c => {
+        const cls = c.getAttribute('data-class') || '';
+        c.style.display = cls.includes(grade) ? 'block' : 'none';
+      });
+    }
+
+    function loadMyDownloadsToggle() {
+      const section = document.getElementById('my-downloads');
+      if (section) {
+        section.closest('div').style.display =
+          section.closest('div').style.display === 'none' ? '' : 'none';
+      } else {
+        loadMyDownloads();
+      }
+    }
+
+    // ---------------- Load Files ----------------
+    async function loadSchemes() {
+      try {
+        const res = await fetch("https://server-1-bmux.onrender.com/api/files");
+        const files = await res.json();
+        const schemeList = document.getElementById("scheme-list");
+        const revisionList = document.getElementById("revision-list");
+
+        schemeList.innerHTML = '';
+        revisionList.innerHTML = '';
+
+        files.forEach(file => {
+          const card = document.createElement("div");
+          card.className = "col-md-4 mb-4";
+          card.setAttribute('data-class', file.class);
+
+          // timestamps with moment
+          const uploadedHuman = file.uploadDate ? moment(file.uploadDate).fromNow() : "N/A";
+
+          card.innerHTML = `
+            <div class="card shadow-lg border-0 p-4 h-100 d-flex flex-column justify-content-between text-white bg-gradient"
+                 style="background: rgba(0,0,0,0.3); backdrop-filter: blur(12px); border-radius: 20px;" data-aos="fade-up">
+              <div>
+                <h5 class="fw-bold mb-3">
+                  <i class="bi bi-file-earmark-text me-2 text-primary"></i>${file.title}
+                </h5>
+                <p class="mb-2"><i class="bi bi-book me-2 text-warning"></i><strong>Subject:</strong> ${file.subject}</p>
+                <p class="mb-2"><i class="bi bi-person-video3 me-2 text-info"></i><strong>Class:</strong> ${file.class}</p>
+                <p class="mb-2"><i class="bi bi-calendar-week me-2 text-light"></i><strong>Uploaded:</strong> ${uploadedHuman}</p>
+                <p class="mb-2"><i class="bi bi-tags-fill me-2 text-secondary"></i><strong>Type:</strong> ${file.type}</p>
+                <p class="mb-2"><i class="bi bi-cash-coin me-2 text-success"></i><strong>Amount:</strong> KES ${file.price}</p>
+              </div>
+              <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-outline-warning btn-sm rounded-pill fw-semibold"
+                        onclick="payWithMpesa('${file.filename}', ${file.price}, this)">
+                  <i class="bi bi-phone-fill me-1"></i> Pay
+                </button>
+                <button class="btn btn-outline-success btn-lg rounded-pill fw-bold" disabled>
+                  <i class="bi bi-cloud-arrow-down-fill me-1"></i> Download File
+                </button>
+              </div>
+            </div>`;
+
+          if (file.type?.toLowerCase() === "revision") {
+            revisionList.appendChild(card);
+          } else {
+            schemeList.appendChild(card);
+          }
+        });
+      } catch (err) {
+        Swal.fire("Error", "Failed to load schemes", "error");
+      }
+    }
+// ---------------- Payment Flow ----------------
+// ---------------- Payment ----------------
+// ---------------- Helper: Format MSISDN ----------------
+function toMSISDN(input) {
+  let msisdn = input.replace(/\D/g, '');
+  if (msisdn.startsWith('07') && msisdn.length === 10) msisdn = '254' + msisdn.slice(1);
+  if (msisdn.startsWith('254') && msisdn.length === 12) return msisdn;
+  return null;
+}
+
+// ---------------- Pay with M-Pesa ----------------
+function payWithMpesa(filename, price, btn) {
+  const lastMsisdn = localStorage.getItem('last_msisdn') || '';
+
+  Swal.fire({
+    title: 'Enter Safaricom Number',
+    input: 'text',
+    inputValue: lastMsisdn,
+    inputPlaceholder: '07XXXXXXXX or 2547XXXXXXXX',
+    confirmButtonText: 'Pay Now',
+    showCancelButton: true,
+    preConfirm: (val) => {
+      const msisdn = toMSISDN(val);
+      if (!msisdn) Swal.showValidationMessage('Enter valid number');
+      return msisdn;
+    }
+  }).then(result => {
+    if (!result.isConfirmed) return;
+
+    const phoneNumber = result.value;
+    localStorage.setItem('last_msisdn', phoneNumber);
+
+    const startedAt = moment();
+    Swal.fire({
+      title: 'Sending STK Push…',
+      html: `
+        <div>Check your phone and approve the payment.</div>
+        <div class="small mt-2">Request initiated: <strong>${startedAt.format('YYYY-MM-DD HH:mm:ss')}</strong></div>
+        <div id="stk-timer" class="mt-2">60</div>
+      `,
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    // Sanitize filename
+    const sanitizedFilename = filename.replace(/[^\w\d-_\.]/g, '_');
+
+    fetch('https://server-1-bmux.onrender.com/api/pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phoneNumber,
+        filePrice: isNaN(Number(price)) ? 0 : Number(price),
+        fileName: sanitizedFilename
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        Swal.fire('❌ Payment Failed', data.message || 'Could not initiate STK Push.', 'error');
+        return;
+      }
+
+      // Poll for confirmation
+      pollConfirmation(sanitizedFilename, btn);
+    })
+    .catch(() => Swal.fire('❌ Error', 'Server error during payment.', 'error'));
+  });
+}
+
+// ---------------- Poll for M-Pesa confirmation ----------------
+function pollConfirmation(filename, btn) {
+  const maxWait = 60000; // 60s
+  const startTime = Date.now();
+
+  let countdown;
+  const pollInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`https://server-1-bmux.onrender.com/api/confirm?filename=${encodeURIComponent(filename)}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+      if (data.confirmed && data.token) {
+        clearInterval(pollInterval);
+        clearInterval(countdown);
+        grantAccess(filename, data.token, btn, data.mpesaReceipt);
+      }
+    } catch (err) {
+      console.warn('Polling error:', err);
+    }
+  }, 3000);
+
+  Swal.fire({
+    title: 'Waiting for STK Push confirmation...',
+    html: `<p>Please complete payment on your phone.<br><span id="stk-timer">${Math.ceil(maxWait / 1000)}</span> seconds remaining</p>`,
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+
+      countdown = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, Math.ceil((maxWait - elapsed) / 1000));
+        const timerEl = Swal.getHtmlContainer().querySelector('#stk-timer');
+        if (timerEl) timerEl.textContent = remaining;
+
+        if (remaining <= 0) {
+          clearInterval(countdown);
+          clearInterval(pollInterval);
+          Swal.close();
+          Swal.fire('❌ Timeout', 'No confirmation received. Please check your phone and try again.', 'error');
+        }
+      }, 500);
+    }
+  });
+}
+
+// ---------------- Access + Downloads ----------------
+function grantAccess(filename, token, btn, mpesaReceipt = null) {
+  Swal.close();
+
+  const fileUrl = `https://server-1-bmux.onrender.com/api/uploads/${encodeURIComponent(filename)}?token=${encodeURIComponent(token)}`;
+
+  // Auto-download immediately
+  const a = document.createElement('a');
+  a.href = fileUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Enable download button for re-downloads
+  const actions = btn.closest('.file-actions') || btn.parentElement;
+  const downloadBtn = actions.querySelector('.btn-outline-success');
+  if (downloadBtn) {
+    downloadBtn.disabled = false;
+    downloadBtn.onclick = () => window.open(fileUrl, "_blank");
+  }
+
+  Swal.fire('✅ Payment Successful', 'Your file is now downloading.', 'success');
+
+  // Save download info locally
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  if (!downloads.some(d => d.filename === filename)) {
+    downloads.push({
+      filename,
+      token,
+      mpesaReceipt: mpesaReceipt || 'N/A',
+      date: new Date().toISOString()
+    });
+    localStorage.setItem('downloads', JSON.stringify(downloads));
+  }
+
+  if (typeof loadMyDownloads === 'function') loadMyDownloads();
+}
+
+
+    function loadMyDownloads() {
+      const saved = JSON.parse(localStorage.getItem('downloads') || '[]');
+      if (!saved.length) return;
+
+      if (!document.getElementById('my-downloads')) {
+        const sectionWrap = document.createElement('div');
+        sectionWrap.innerHTML = `
+          <h3 class="mt-5 text-center text-white">📜 My Downloads</h3>
+          <div class="row mt-3" id="my-downloads"></div>`;
+        document.querySelector('.container').appendChild(sectionWrap);
+      }
+
+      const list = document.getElementById('my-downloads');
+      list.innerHTML = '';
+      saved.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'col-md-4 mb-4';
+        const when = moment(item.date).calendar();
+        card.innerHTML = `
+          <div class="card p-4 border-0 shadow text-white"
+               style="background: rgba(10, 10, 10, 0.6); border-radius: 18px;">
+            <h5><i class="bi bi-check-circle-fill me-2 text-success"></i>${item.filename}</h5>
+            <p class="small text-light">Purchased: ${when}</p>
+            <a class="btn btn-outline-light btn-sm rounded-pill mt-2"
+               href="https://server-1-bmux.onrender.com/api/files/${encodeURIComponent(item.filename)}?token=${encodeURIComponent(item.token)}" download>
+              <i class="bi bi-download me-1"></i> Download Again
+            </a>
+          </div>`;
+        list.appendChild(card);
+      });
+    }
+
+    // ---------------- Filtering ----------------
+    function filterSchemes() {
+      const input = document.getElementById('searchBox').value.toLowerCase();
+      const cards = document.querySelectorAll('#scheme-list .card, #revision-list .card');
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.parentElement.style.display = text.includes(input) ? 'block' : 'none';
+      });
+    }
+    // ---------------- New Feature: Quick Pay History ----------------
+function showPaymentHistory() {
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  if (!downloads.length) {
+    Swal.fire('No Payments', 'You have not made any payments yet.', 'info');
+    return;
+  }
+
+  let html = '<ul class="list-group">';
+  downloads.forEach(d => {
+    const date = moment(d.date).format('YYYY-MM-DD HH:mm:ss');
+    html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+      ${d.filename} 
+      <span class="badge bg-success rounded-pill">${date}</span>
+    </li>`;
+  });
+  html += '</ul>';
+
+  Swal.fire({
+    title: '💰 Payment & Download History',
+    html,
+    width: '600px',
+    showCloseButton: true,
+    showConfirmButton: false,
+    scrollbarPadding: false
+  });
+}
+
+// ---------------- New Feature: Download All Purchased ----------------
+function downloadAllPurchased() {
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  if (!downloads.length) {
+    Swal.fire('No Files', 'You have not purchased any files yet.', 'info');
+    return;
+  }
+
+  downloads.forEach(item => {
+    const fileUrl = `https://server-1-bmux.onrender.com/api/files/${encodeURIComponent(item.filename)}?token=${encodeURIComponent(item.token)}`;
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.target = '_blank';
+    a.download = item.filename;
+    a.click();
+  });
+
+  Swal.fire('✅ Download Started', 'All your purchased files are being downloaded.', 'success');
+}
+
+// ---------------- New Feature: Quick Copy Transaction ID ----------------
+function copyTransactionID(filename) {
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  const file = downloads.find(d => d.filename === filename);
+  if (!file || !file.token) {
+    Swal.fire('Not Found', 'Transaction ID not found for this file.', 'error');
+    return;
+  }
+
+  navigator.clipboard.writeText(file.token).then(() => {
+    Swal.fire('Copied!', 'Transaction ID copied to clipboard.', 'success');
+  }).catch(() => {
+    Swal.fire('Error', 'Failed to copy Transaction ID.', 'error');
+  });
+}
+
+// ---------------- New Feature: Track Pending Payments ----------------
+function showPendingPayments() {
+  fetch('https://server-1-bmux.onrender.com/api/pending')
+    .then(res => res.json())
+    .then(data => {
+      if (!data.length) {
+        Swal.fire('No Pending', 'No pending STK Push requests at the moment.', 'info');
+        return;
+      }
+
+      let html = '<ul class="list-group">';
+      data.forEach(p => {
+        html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+          ${p.filename} - ${p.phoneNumber}
+          <span class="badge bg-warning rounded-pill">Pending</span>
+        </li>`;
+      });
+      html += '</ul>';
+
+      Swal.fire({
+        title: '⏳ Pending Payments',
+        html,
+        width: '600px',
+        showCloseButton: true,
+        showConfirmButton: false
+      });
+    })
+    .catch(() => Swal.fire('Error', 'Could not fetch pending payments.', 'error'));
+}
+
+// ---------------- New Feature: Quick Share File Link ----------------
+function shareFileLink(filename) {
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  const file = downloads.find(d => d.filename === filename);
+  if (!file || !file.token) {
+    Swal.fire('Not Found', 'Cannot share this file as it is not purchased yet.', 'error');
+    return;
+  }
+
+  const fileUrl = `https://server-1-bmux.onrender.com/api/files/${encodeURIComponent(filename)}?token=${encodeURIComponent(file.token)}`;
+  navigator.clipboard.writeText(fileUrl).then(() => {
+    Swal.fire('✅ Link Copied', 'The secure file link has been copied to clipboard.', 'success');
+  }).catch(() => {
+    Swal.fire('Error', 'Failed to copy the file link.', 'error');
+  });
+}
+
+// ---------------- New Feature: Search Purchased Files ----------------
+function searchPurchasedFiles(query) {
+  const downloads = JSON.parse(localStorage.getItem('downloads') || '[]');
+  const filtered = downloads.filter(d => d.filename.toLowerCase().includes(query.toLowerCase()));
+
+  if (!filtered.length) {
+    Swal.fire('No Match', 'No purchased files matched your search.', 'info');
+    return;
+  }
+
+  let html = '<ul class="list-group">';
+  filtered.forEach(f => {
+    html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+      ${f.filename} 
+      <button class="btn btn-sm btn-outline-primary" onclick="shareFileLink('${f.filename}')">Share</button>
+    </li>`;
+  });
+  html += '</ul>';
+
+  Swal.fire({
+    title: '🔎 Search Results',
+    html,
+    width: '600px',
+    showCloseButton: true,
+    showConfirmButton: false
+  });
+}
+
+
+    // Boot
+    loadSchemes();
+    loadMyDownloads();
+  </script>
+</body>
+</html>

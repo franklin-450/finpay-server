@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - SchemeHub</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    .navbar {
+      background: #0d6efd;
+    }
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .icon-circle {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: #e9f2ff;
+      font-size: 1.5rem;
+      color: #0d6efd;
+    }
+    .table-container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .hero-image {
+      width: 100%; 
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</a>
+    </div>
+  </nav>
+
+  <!-- Hero Image -->
+  <div class="container mt-4">
+    <img src="https://source.unsplash.com/1200x300/?technology,data" alt="Analytics" class="hero-image">
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="container my-4">
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card p-3 d-flex align-items-center">
+          <div class="icon-circle mb-2"><i class="bi bi-currency-dollar"></i></div>
+          <h5>Total Revenue (Today)</h5>
+          <h3 id="revToday">Kes 0</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 d-flex align-items-center">
+          <div class="icon-circle mb-2"><i class="bi bi-calendar-week"></i></div>
+          <h5>Total Revenue (This Week)</h5>
+          <h3 id="revWeek">Kes 0</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 d-flex align-items-center">
+          <div class="icon-circle mb-2"><i class="bi bi-calendar-month"></i></div>
+          <h5>Total Revenue (This Month)</h5>
+          <h3 id="revMonth">Kes 0</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 d-flex align-items-center">
+          <div class="icon-circle mb-2"><i class="bi bi-calendar-year"></i></div>
+          <h5>Total Revenue (This Year)</h5>
+          <h3 id="revYear">Kes 0</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Highest Downloads -->
+  <div class="container mb-4">
+    <div class="card p-3">
+      <h5><i class="bi bi-graph-up-arrow me-2"></i>Highest Downloads</h5>
+      <ul id="highestDownloads" class="list-group list-group-flush"></ul>
+    </div>
+  </div>
+
+  <!-- Transaction Table -->
+  <div class="container table-container">
+    <h5><i class="bi bi-table me-2"></i>All Transactions</h5>
+    <table class="table table-hover mt-3">
+      <thead class="table-dark">
+        <tr>
+          <th>Transaction ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>File Name</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="transactionTable">
+        <tr><td colspan="5" class="text-center">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadDashboard() {
+      try {
+        // Fetch data from backend
+        const res = await fetch("https://server-1-bmux.onrender.com/api/admin/transactions");
+        const data = await res.json();
+
+        // Update revenue cards
+        document.getElementById("revToday").textContent = "Kes" + data.revenue.today;
+        document.getElementById("revWeek").textContent = "Kes" + data.revenue.week;
+        document.getElementById("revMonth").textContent = "Kes" + data.revenue.month;
+        document.getElementById("revYear").textContent = "Kes" + data.revenue.year;
+
+        // Update highest downloads
+        const highestList = document.getElementById("highestDownloads");
+        highestList.innerHTML = "";
+        data.highestDownloads.forEach(item => {
+          let li = document.createElement("li");
+          li.className = "list-group-item";
+          li.innerHTML = `<i class="bi bi-file-earmark-text me-2"></i> ${item.file} - <strong>${item.count}</strong> downloads`;
+          highestList.appendChild(li);
+        });
+
+        // Update transaction table
+        const table = document.getElementById("transactionTable");
+        table.innerHTML = "";
+        data.transactions.forEach(tx => {
+          let row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${tx.mpesaReceipt || "—"}</td>
+          <td>${tx.phone || "—"}</td>
+          <td>${tx.amount || "KES 0.00"}</td>
+          <td>${tx.filename || "Unknown File"}</td>
+          <td>${tx.date || "No date"}</td>
+          <td>
+            <span class="badge
+              ${String(tx.status).toLowerCase() === "confirmed" ? "bg-success" : ""}
+              ${String(tx.status).toLowerCase() === "pending" ? "bg-warning" : ""}
+              ${String(tx.status).toLowerCase() === "failed" ? "bg-danger" : ""}
+              ${String(tx.status).toLowerCase() === "refunded" ? "bg-info" : ""}
+              ${!tx.status ? "bg-secondary" : ""}">
+              ${tx.status || "Unknown"}
+            </span>
+          </td>
+                    
+          `;
+          table.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error("Error loading dashboard:", err);
+      }
+    }
+    loadDashboard();
+  </script>
+</body>
+</html>

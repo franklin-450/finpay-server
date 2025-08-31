@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Deposit - Fintech App</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 50px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    input,
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div id="userid" class="userid"></div>
+    <h2><span style="width: 80px;">💰</span> Deposit From M-Pesa To Fintech</h2>
+    <input type="number" id="amount" placeholder="Enter Amount" required />
+    <input type="tel" id="phone" placeholder="Phone Number (e.g. 2547xxxxxxx)" required />
+    <button onclick="deposit()">Deposit</button>
+  </div>
+  <script>
+    async function deposit() {
+      const phone = document.getElementById("phone").value;
+      const amount = document.getElementById("amount").value;
+
+      if (!phone || !amount) {
+        alert("Please enter both phone and amount");
+        return;
+      }
+
+      const res = await fetch("https://c884-2c0f-fe38-2031-101a-2da1-7ab-27fb-1cb4.ngrok-free.app/api/mpesa/deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, amount: parseFloat(amount) })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        alert(result.message || "Deposit failed");
+      } else {
+        alert(result.message || "STK Push sent. Check your phone.");
+      }
+    }
+  </script>
+</body>
+
+</html>

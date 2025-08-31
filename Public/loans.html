@@ -1,0 +1,39 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Loans</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="loans.html"><i data-feather="layers"></i> Loans</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Loans</h2></div>
+      <div class="card">
+        <h4>Available Offers</h4>
+        <ul>
+          <li>$500 at 5% (12 months) <button class="btn primary" onclick="applyLoan(500)">Apply</button></li>
+          <li>$1,200 at 4.5% (24 months) <button class="btn primary" onclick="applyLoan(1200)">Apply</button></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+

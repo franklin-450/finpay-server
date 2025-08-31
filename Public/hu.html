@@ -1,0 +1,386 @@
+<!--
+FinPay — Multi-page HTML bundle
+Files included below (copy each to its own file):
+- index.html
+- dashboard.html
+- transactions.html
+- payments.html
+- cards.html
+- investments.html
+- loans.html
+- support.html
+- style.css
+- app.js
+-->
+
+===== index.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <script>
+    // Redirect to dashboard (single entry point for now)
+    window.location.replace('dashboard.html');
+  </script>
+</body>
+</html>
+
+===== dashboard.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <!-- Sidebar + Main layout (same across pages) -->
+  <div class="layout">
+    <aside class="sidebar" id="side">
+      <div class="brand">
+        <div class="logo">FP</div>
+        <div>
+          <h3>FinPay</h3>
+          <div class="muted">Banking · Payments · Invest</div>
+        </div>
+      </div>
+      <nav class="nav-section">
+        <a class="nav-item active" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="cards.html"><i data-feather="credit-card"></i> Cards</a>
+        <a class="nav-item" href="investments.html"><i data-feather="bar-chart-2"></i> Investments</a>
+        <a class="nav-item" href="loans.html"><i data-feather="layers"></i> Loans</a>
+        <a class="nav-item" href="support.html"><i data-feather="help-circle"></i> Support</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search"><i data-feather="search"></i><input id="globalSearch" placeholder="Search transactions, people, invoices..."></div>
+        <div class="top-actions">
+          <button class="icon-btn" id="notifBtn" title="Notifications"><i data-feather="bell"></i></button>
+          <button class="icon-btn" id="profileBtn" title="Profile"><i data-feather="user"></i></button>
+        </div>
+      </div>
+
+      <section class="grid">
+        <div class="card col-4">
+          <div class="balance-large">
+            <div class="muted" style="font-weight:700">Total Balance</div>
+            <h1 id="mainBalance">$12,400.23</h1>
+            <div class="balance-actions">
+              <a class="btn primary" href="payments.html">+ Add Money</a>
+              <button class="btn ghost" onclick="openQuick('transfer')">Transfer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col-8">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Activity</div>
+            <div class="muted" style="font-size:13px">Last 30 days</div>
+          </div>
+          <div id="chartPlaceholder">[Chart will render here]</div>
+        </div>
+
+        <div class="card col-6">
+          <div style="font-weight:700;margin-bottom:8px">Quick Actions</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn primary" onclick="window.location='payments.html'">Send Money</button>
+            <button class="btn" style="background:linear-gradient(90deg,#28b463,#07a26e);color:#fff" onclick="window.location='payments.html#airtime'">Buy Airtime</button>
+            <button class="btn" style="background:linear-gradient(90deg,#ff9a66,#ff5e62);color:#fff" onclick="window.location='payments.html#merchant'">Merchant</button>
+          </div>
+        </div>
+
+        <div class="card col-6">
+          <div style="font-weight:700;margin-bottom:8px">Recent Transactions</div>
+          <div style="max-height:220px;overflow:auto">
+            <table id="txTable"><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead><tbody><tr><td colspan="3" class="muted">No data</td></tr></tbody></table>
+          </div>
+        </div>
+
+        <div class="card col-12">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Portfolio Snapshot</div>
+            <div class="muted" style="font-size:13px">Last updated: <span id="portfolioUpdated">—</span></div>
+          </div>
+          <div style="display:flex;gap:18px;align-items:center">
+            <div style="flex:1">[Investments widget placeholder]</div>
+            <div style="width:220px">Total invested:<div style="font-weight:800;font-size:18px" id="investTotal">$3,200.00</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== transactions.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Transactions</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <!-- sidebar markup copied for consistency -->
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item active" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="cards.html"><i data-feather="credit-card"></i> Cards</a>
+        <a class="nav-item" href="investments.html"><i data-feather="bar-chart-2"></i> Investments</a>
+        <a class="nav-item" href="loans.html"><i data-feather="layers"></i> Loans</a>
+        <a class="nav-item" href="support.html"><i data-feather="help-circle"></i> Support</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h2>All Transactions</h2>
+        <div class="top-actions"><button class="btn primary" onclick="exportCSV()">Export CSV</button></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <input id="txSearch" placeholder="Search transactions..." class="input" oninput="renderTxs()">
+          <div style="display:flex;gap:8px"><select id="txFilter" onchange="renderTxs()"><option value="all">All</option><option value="sent">Sent</option><option value="received">Received</option></select></div>
+        </div>
+
+        <table id="allTxTable" style="margin-top:12px;width:100%"><thead><tr><th>Date</th><th>Reference</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody></tbody></table>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== payments.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Payments</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item active" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="cards.html"><i data-feather="credit-card"></i> Cards</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Payments</h2></div>
+
+      <div class="grid">
+        <div class="card col-8">
+          <h3>Send Payment</h3>
+          <div style="margin-top:12px">
+            <label>Recipient (phone or email)</label>
+            <input id="payTo" class="input" placeholder="eg. +254700000000 or user@domain.com">
+          </div>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <input id="payAmount" type="number" class="input" placeholder="Amount">
+            <select id="payCurrency" class="input"><option>USD</option><option>KES</option></select>
+          </div>
+          <div style="margin-top:12px"><button class="btn primary" onclick="sendPayment()">Send</button></div>
+        </div>
+
+        <div class="card col-4">
+          <h4>Recent recipients</h4>
+          <div id="recipients" class="muted">No recent recipients</div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== cards.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Cards</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item active" href="cards.html"><i data-feather="credit-card"></i> Cards</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>My Cards</h2></div>
+      <div class="grid">
+        <div class="card col-6">
+          <h4>Virtual Card</h4>
+          <div class="muted">**** **** **** 1234</div>
+          <div style="margin-top:12px"><button class="btn ghost" onclick="freezeCard('virtual')">Freeze</button></div>
+        </div>
+        <div class="card col-6">
+          <h4>Physical Card</h4>
+          <div class="muted">**** **** **** 5678</div>
+          <div style="margin-top:12px"><button class="btn primary" onclick="orderReplacement()">Order Replacement</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== investments.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Investments</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="investments.html"><i data-feather="bar-chart-2"></i> Investments</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Investments</h2></div>
+      <div class="card">
+        <h3>Portfolio</h3>
+        <canvas id="portfolioChart" style="max-height:320px"></canvas>
+        <p>Total Invested: <strong id="totalInvested">$3,200</strong></p>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== loans.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Loans</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="payments.html"><i data-feather="send"></i> Payments</a>
+        <a class="nav-item" href="loans.html"><i data-feather="layers"></i> Loans</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Loans</h2></div>
+      <div class="card">
+        <h4>Available Offers</h4>
+        <ul>
+          <li>$500 at 5% (12 months) <button class="btn primary" onclick="applyLoan(500)">Apply</button></li>
+          <li>$1,200 at 4.5% (24 months) <button class="btn primary" onclick="applyLoan(1200)">Apply</button></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>
+
+===== support.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinPay — Support</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">FP</div><div><h3>FinPay</h3><div class="muted">Banking · Payments · Invest</div></div></div>
+      <nav class="nav-section">
+        <a class="nav-item" href="dashboard.html"><i data-feather="grid"></i> Dashboard</a>
+        <a class="nav-item" href="transactions.html"><i data-feather="list"></i> Transactions</a>
+        <a class="nav-item" href="support.html"><i data-feather="help-circle"></i> Support</a>
+      </nav>
+      <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><h2>Support</h2></div>
+      <div class="card">
+        <h3>Open a Ticket</h3>
+        <input id="ticketSubject" class="input" placeholder="Subject">
+        <textarea id="ticketBody" class="input" placeholder="Describe your issue" style="min-height:120px"></textarea>
+        <div style="margin-top:12px"><button class="btn primary" onclick="submitTicket()">Submit Ticket</button></div>
+      </div>
+    </main>
+  </div>
+  <script>feather.replace()</script>
+</body>
+</html>

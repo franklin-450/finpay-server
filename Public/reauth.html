@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Re-authentication | Fintech Super App</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .reauth-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .form-control {
+        border-radius: 12px;
+    }
+    .btn-custom {
+        background: #007bff;
+        color: white;
+        border-radius: 12px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .btn-custom:hover {
+        background: #0056b3;
+    }
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo img {
+        width: 80px;
+    }
+</style>
+</head>
+<body>
+
+<div class="reauth-card">
+    <div class="logo">
+        <img src="asset/word.png" alt="Fintech Logo">
+    </div>
+    <div class="text-center mb-4">
+        <i class="bi bi-shield-lock" style="font-size: 3rem; color: #007bff;"></i>
+        <h4 class="mt-2">Re-authentication Required</h4>
+        <p class="text-muted">Your session has been idle. Please verify your account.</p>
+    </div>
+
+    <div id="alertBox"></div> <!-- Alerts will appear here -->
+
+    <form id="reauthForm">
+        <div class="mb-3">
+            <label class="form-label">Account Number</label>
+            <input type="text" class="form-control" id="accountNo" placeholder="Enter your account number" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="bi bi-eye"></i></button>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-custom w-100">Verify</button>
+    </form>
+</div>
+
+<script>
+function showAlert(message, type = "danger") {
+    const alertBox = document.getElementById("alertBox");
+    alertBox.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
+
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const pwd = document.getElementById('password');
+    const icon = this.querySelector('i');
+    if (pwd.type === "password") {
+        pwd.type = "text";
+        icon.classList.replace("bi-eye", "bi-eye-slash");
+    } else {
+        pwd.type = "password";
+        icon.classList.replace("bi-eye-slash", "bi-eye");
+    }
+});
+
+document.getElementById('reauthForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const accountNo = document.getElementById('accountNo').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    try {
+        const res = await fetch('http://localhost:3000/api/reauth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accountNo, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            showAlert("✅ Verification successful! Redirecting...", "success");
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 800);
+        } else {
+            showAlert(data.message || "❌ Re-authentication failed!", "danger");
+        }
+    } catch (error) {
+        showAlert("⚠️ Network error. Please try again.", "warning");
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

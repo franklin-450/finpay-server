@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FinPay — Secure Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    :root{
+      --bg:#0a1533;
+      --bg2:#0e1a3f;
+      --card:#ffffff;
+      --text:#0b2540;
+      --muted:#6b7a90;
+      --brand-1:#0a3c7d;
+      --brand-2:#00adef;
+      --danger:#e5484d;
+      --success:#2fa36b;
+      --input:#e8eef6;
+      --glass:rgba(255,255,255,0.65);
+    }
+    [data-theme="dark"]{
+      --bg:#050b1e;
+      --bg2:#081129;
+      --card:#0d162e;
+      --text:#f2f4f8;
+      --muted:#9aa4b2;
+      --input:#17223e;
+      --glass:rgba(13,22,46,0.72);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% 10%, #133a7a33 0%, transparent 60%),
+        radial-gradient(1000px 500px at 90% 90%, #00adef22 0%, transparent 60%),
+        linear-gradient(160deg,var(--bg),var(--bg2));
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    /* Shell */
+    .shell{
+      width:100%;
+      max-width:980px;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:20px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){
+      .shell{grid-template-columns:1fr}
+    }
+
+    /* Left brand panel */
+    .left{
+      position:relative;
+      border-radius:20px;
+      overflow:hidden;
+      background:linear-gradient(135deg, rgba(10,60,125,0.9), rgba(0,173,239,0.75));
+      color:#fff;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.25);
+      min-height:520px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px
+    }
+    .brand-logo{
+      width:46px;height:46px;border-radius:12px;
+      display:grid;place-items:center;
+      background:linear-gradient(90deg,#fff,rgba(255,255,255,0.8));
+      color:#0a3c7d;font-weight:800;
+    }
+    .left h1{margin:0;font-size:28px}
+    .hero-copy{opacity:.9;line-height:1.55}
+    .benefits{display:grid;gap:10px;margin-top:auto}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.25);
+      padding:8px 12px;border-radius:10px;font-size:13px
+    }
+    .left-ill{
+      position:absolute;inset:auto -40px -40px auto;opacity:.2;
+      filter:blur(20px);transform:rotate(-6deg);
+      width:380px;height:260px;background:radial-gradient(120px 120px at 40% 40%, #fff, transparent 60%), radial-gradient(220px 200px at 60% 60%, #000, transparent 60%);
+      border-radius:24px
+    }
+
+    /* Right card */
+    .card{
+      position:relative;
+      border-radius:20px;
+      background:var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow:0 18px 60px rgba(0,0,0,0.22);
+      padding:26px;
+    }
+    .card-inner{
+      background:var(--card);
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(2,6,23,0.12);
+      overflow:hidden;
+    }
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 18px;border-bottom:1px solid rgba(2,6,23,0.06)
+    }
+    .theme-toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer}
+    .content{padding:22px 18px 18px 18px}
+    .logo-row{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px}
+    .logo-row img{width:64px;height:64px}
+    .title{font-weight:800;font-size:22px;text-align:center;margin:6px 0 2px}
+    .subtitle{text-align:center;color:var(--muted);font-size:14px;margin-bottom:14px}
+
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .control{
+      position:relative
+    }
+    .control input{
+      width:100%;padding:12px 42px 12px 12px;
+      border-radius:10px;border:1px solid var(--input);
+      background:transparent;color:var(--text);font-size:14px;outline:none
+    }
+    .control input:focus{box-shadow:0 0 0 3px rgba(0,173,239,.18);border-color:#9ddcf5}
+    .icon-btn{
+      position:absolute;top:50%;right:8px;transform:translateY(-50%);
+      width:34px;height:34px;border:none;border-radius:8px;display:grid;place-items:center;
+      background:transparent;cursor:pointer;color:var(--muted)
+    }
+    .row{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 12px
+    }
+    .row a{color:var(--brand-1);text-decoration:none;font-size:13px}
+    .row a:hover{text-decoration:underline}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      width:100%;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;
+      font-weight:700;font-size:15px;
+      background:linear-gradient(90deg,var(--brand-1),var(--brand-2));color:#fff;
+      box-shadow:0 10px 28px rgba(10,60,125,0.28);transition:transform .18s ease, filter .2s ease
+    }
+    .btn:hover{transform:translateY(-1.5px)}
+    .btn:disabled{opacity:.7;cursor:not-allowed;filter:grayscale(.3)}
+    .btn-ghost{
+      width:100%;border:1px solid rgba(2,6,23,0.08);background:transparent;color:var(--text);
+      border-radius:10px;padding:10px 12px;font-weight:600
+    }
+    .or{
+      display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin:12px 0
+    }
+    .or:before,.or:after{content:"";height:1px;background:rgba(2,6,23,0.08)}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+    /* Strength bar */
+    .strength{display:flex;gap:6px;margin-top:6px}
+    .bar{height:6px;flex:1;border-radius:6px;background:#d8deea}
+    .bar.on-1{background:#e57b77}
+    .bar.on-2{background:#f6b26b}
+    .bar.on-3{background:#8fd17f}
+    .bar.on-4{background:#2fa36b}
+
+    /* Error/Toast */
+    .error{color:var(--danger);font-size:13px;margin-top:6px;display:none}
+    .toast{
+      position:fixed;right:20px;top:20px;z-index:2000;max-width:320px;
+      transition:opacity .4s ease;opacity:1
+    }
+    .toast-card{
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255,255,255,0.82);
+      color:#1a2742;
+      border:1px solid rgba(2,6,23,0.08);
+      box-shadow:0 12px 34px rgba(0,0,0,0.22);
+      border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start
+    }
+    [data-theme="dark"] .toast-card{background: rgba(20,28,52,0.82); color:#e8ecf8}
+    .toast.hide{opacity:0}
+
+    /* Social buttons */
+    .social{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .social .btn-ghost{display:flex;gap:8px;align-items:center;justify-content:center}
+
+    /* 2FA modal */
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);display:none;z-index:1500
+    }
+    .modal{
+      position:fixed;inset:auto 0 0 0;margin:auto;top:50%;transform:translateY(-50%);
+      width:100%;max-width:440px;background:var(--card);border-radius:14px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);padding:20px;display:none;z-index:1600
+    }
+    .modal h3{margin:0 0 6px}
+    .code{
+      display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px
+    }
+    .code input{
+      text-align:center;font-size:20px;padding:10px;border-radius:10px;border:1px solid var(--input);
+      background:transparent;color:var(--text)
+    }
+
+    /* System pref dark mode */
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme="light"]){ color-scheme:dark }
+      html:not([data-theme="light"]) body{ }
+      html:not([data-theme="light"]) [data-theme="dark"]{ }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <!-- Brand / Story panel -->
+    <aside class="left">
+      <div class="brand">
+        <div class="brand-logo">FP</div>
+        <div>
+          <div style="font-weight:800;letter-spacing:.2px">FinPay</div>
+          <div style="font-size:12px;opacity:.85">Banking • Payments • Invest</div>
+        </div>
+      </div>
+      <h1>Faster checkouts. Smarter money.</h1>
+      <div class="hero-copy">
+        Move money globally with bank-grade security, instant notifications, and fine-grained controls.
+      </div>
+      <div class="benefits">
+        <div class="tag"><i data-feather="shield"></i> PSD2-style protections</div>
+        <div class="tag"><i data-feather="zap"></i> Real-time transfers</div>
+        <div class="tag"><i data-feather="globe"></i> Multi-currency wallets</div>
+      </div>
+      <div class="left-ill" aria-hidden="true"></div>
+    </aside>
+
+    <!-- Auth card -->
+    <main class="card">
+      <div class="card-inner">
+        <div class="topbar">
+          <div style="font-weight:700">Sign in</div>
+          <label class="theme-toggle">
+            <input id="themeToggle" type="checkbox" />
+            <span><i data-feather="moon"></i> Dark mode</span>
+          </label>
+        </div>
+
+        <div class="content">
+          <div class="logo-row">
+            <img src="asset/word.png" alt="FinPay logo" />
+          </div>
+          <div class="title">Welcome back</div>
+          <div class="subtitle">Log in to your secure account</div>
+
+          <form id="loginForm" novalidate>
+            <!-- Email -->
+            <div class="field">
+              <label for="email">Email</label>
+              <div class="control">
+                <input type="email" id="email" name="email" placeholder="you@domain.com" autocomplete="username" required />
+                <button type="button" class="icon-btn" aria-label="clear email" id="clearEmail"><i data-feather="x"></i></button>
+              </div>
+              <div id="emailErr" class="error">Please enter a valid email address.</div>
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="control">
+                <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+                <button type="button" class="icon-btn" aria-label="toggle password visibility" id="togglePassword"><i data-feather="eye"></i></button>
+              </div>
+              <div class="strength" aria-hidden="true">
+                <div id="b1" class="bar"></div>
+                <div id="b2" class="bar"></div>
+                <div id="b3" class="bar"></div>
+                <div id="b4" class="bar"></div>
+              </div>
+              <div id="capsHint" class="hint" style="display:none">Caps Lock is ON</div>
+              <div id="pwdErr" class="error">Password must be at least 8 characters.</div>
+            </div>
+
+            <div class="row">
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)">
+                <input type="checkbox" id="remember" /> Remember me
+              </label>
+              <a href="reset.html">Forgot password?</a>
+            </div>
+
+            <button id="submitBtn" class="btn" type="submit">
+              <i data-feather="log-in"></i> Log in
+            </button>
+
+            <div class="or"><span>or continue with</span></div>
+
+            <div class="social">
+              <button type="button" class="btn-ghost" id="loginGoogle"><i data-feather="google"></i> Google</button>
+              <button type="button" class="btn-ghost" id="loginApple"><i data-feather="apple"></i> Apple</button>
+            </div>
+
+            <div class="hint" style="text-align:center;margin-top:12px">
+              New to FinPay? <a href="signup.html">Create account</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" style="display:none"></div>
+
+  <!-- 2FA Modal -->
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
+  <div id="mfaModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="mfaTitle">
+    <h3 id="mfaTitle">Two-factor verification</h3>
+    <div style="color:var(--muted);font-size:14px;margin-bottom:8px">
+      Enter the 6-digit code from your authenticator app or SMS.
+    </div>
+    <div class="code" id="mfaInputs">
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button id="mfaCancel" class="btn-ghost" type="button">Cancel</button>
+      <button id="mfaSubmit" class="btn" type="button"><i data-feather="shield"></i> Verify</button>
+    </div>
+    <div class="hint" id="mfaErr" style="color:var(--danger);display:none;margin-top:8px">Invalid code. Try again.</div>
+  </div>
+
+  <script>
+    // ---------- Utilities ----------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+    const API_BASE = 'http://localhost:3000';
+
+    function toast(message, type="info"){
+      const t = $('#toast');
+      t.style.display = 'block';
+      t.innerHTML = `
+        <div class="toast-card">
+          <div><i data-feather="${type==='error'?'alert-triangle': type==='success'?'check-circle':'info'}"></i></div>
+          <div>${message}</div>
+        </div>`;
+      feather.replace();
+      setTimeout(()=> t.classList.add('hide'), 2800);
+      setTimeout(()=> { t.style.display='none'; t.classList.remove('hide'); }, 3300);
+    }
+
+    function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function strengthScore(pwd){
+      let s=0;
+      if(pwd.length>=8) s++;
+      if(/[A-Z]/.test(pwd)) s++;
+      if(/[0-9]/.test(pwd)) s++;
+      if(/[^A-Za-z0-9]/.test(pwd)) s++;
+      return Math.min(s,4);
+    }
+    function renderStrength(n){
+      ['#b1','#b2','#b3','#b4'].forEach((id,i)=>{
+        const el=$(id);
+        el.className='bar';
+        if(n>i) el.classList.add(`on-${n}`);
+      });
+    }
+
+    // ---------- Icon hydrate ----------
+    document.addEventListener('DOMContentLoaded', ()=> {
+      if(window.feather) feather.replace();
+    });
+
+    // ---------- Theme toggle ----------
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeToggle = $('#themeToggle');
+    if(themeToggle) themeToggle.checked = (savedTheme === 'dark');
+    themeToggle?.addEventListener('change', function(){
+      const next = this.checked ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      toast(`Theme: ${next}`, 'info');
+    });
+
+    // ---------- Remember me (email only) ----------
+    const rememberedEmail = localStorage.getItem('rememberEmail');
+    if(rememberedEmail){ $('#email').value = rememberedEmail; $('#remember').checked = true; }
+
+    $('#clearEmail').addEventListener('click', ()=> { $('#email').value=''; $('#email').focus(); });
+
+    // ---------- Password helpers ----------
+    const pwd = $('#password');
+    $('#togglePassword').addEventListener('click', ()=>{
+      const isPwd = pwd.type === 'password';
+      pwd.type = isPwd ? 'text' : 'password';
+      const icon = $('#togglePassword i');
+      icon.setAttribute('data-feather', isPwd ? 'eye-off':'eye');
+      feather.replace();
+    });
+
+    pwd.addEventListener('keyup', (e)=>{
+      renderStrength(strengthScore(pwd.value));
+    });
+    pwd.addEventListener('keydown', e=>{
+      $('#capsHint').style.display = e.getModifierState && e.getModifierState('CapsLock') ? 'block':'none';
+    });
+
+    // ---------- Validation ----------
+    function showErr(id){ const el=$(id); el.style.display='block'; }
+    function hideErr(id){ const el=$(id); el.style.display='none'; }
+
+    $('#email').addEventListener('blur', ()=> {
+      const ok = emailValid($('#email').value.trim());
+      ok ? hideErr('#emailErr') : showErr('#emailErr');
+    });
+    $('#password').addEventListener('blur', ()=> {
+      const ok = $('#password').value.trim().length >= 8;
+      ok ? hideErr('#pwdErr') : showErr('#pwdErr');
+    });
+
+    // ---------- Client-side soft lock after repeated fails ----------
+    const FAIL_KEY = 'loginFails';
+    function incFail(){
+      const now = Date.now();
+      const raw = JSON.parse(localStorage.getItem(FAIL_KEY) || '[]').filter(x => now - x < 10*60*1000);
+      raw.push(now);
+      localStorage.setItem(FAIL_KEY, JSON.stringify(raw));
+      return raw.length;
+    }
+    function isLocked(){
+      const raw = JSON.parse(localStorage.getItem(FAIL_KEY) || '[]').filter(x => Date.now()-x < 10*60*1000);
+      return raw.length >= 5;
+    }
+
+    // ---------- 2FA Modal ----------
+    const overlay = $('#overlay');
+    const mfaModal = $('#mfaModal');
+    let mfaToken = null;
+
+    function openMfa(token){
+      mfaToken = token;
+      overlay.style.display='block';
+      mfaModal.style.display='block';
+      const inputs = $$('#mfaInputs input');
+      inputs.forEach((inp,idx)=>{
+        inp.value='';
+        inp.addEventListener('input', ()=>{
+          if(inp.value.length===1 && idx<inputs.length-1) inputs[idx+1].focus();
+        }, {once:true});
+      });
+      inputs[0].focus();
+      feather.replace();
+    }
+    function closeMfa(){
+      overlay.style.display='none';
+      mfaModal.style.display='none';
+      $('#mfaErr').style.display='none';
+    }
+    $('#mfaCancel').addEventListener('click', closeMfa);
+
+    $('#mfaSubmit').addEventListener('click', async ()=>{
+      const code = Array.from($$('#mfaInputs input')).map(i=>i.value).join('');
+      if(code.length!==6){ $('#mfaErr').style.display='block'; return; }
+      try{
+        const res = await fetch(`${API_BASE}/api/mfa/verify`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ code, token: mfaToken })
+        });
+        const data = await res.json();
+        if(res.ok && data?.token){
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user || {}));
+          toast('Verification successful','success');
+          closeMfa();
+          setTimeout(()=> window.location.href = 'dashboard.html', 300);
+        }else{
+          $('#mfaErr').style.display='block';
+        }
+      }catch(e){
+        toast('Network error during verification','error');
+      }
+    });
+
+    overlay.addEventListener('click', (e)=> { if(e.target===overlay) closeMfa(); });
+
+    // ---------- Submit ----------
+    $('#loginForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+
+      if(isLocked()){
+        toast('Too many attempts. Try again in a few minutes.','error');
+        return;
+      }
+
+      const email = $('#email').value.trim();
+      const password = $('#password').value.trim();
+
+      const okEmail = emailValid(email);
+      const okPwd = password.length >= 8;
+
+      okEmail ? hideErr('#emailErr') : showErr('#emailErr');
+      okPwd ? hideErr('#pwdErr') : showErr('#pwdErr');
+
+      if(!(okEmail && okPwd)) { toast('Fix validation errors and try again','error'); return; }
+
+      const submit = $('#submitBtn');
+      submit.disabled = true;
+      submit.innerHTML = '<i data-feather="loader"></i> Signing in...';
+      feather.replace();
+
+      try{
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if(res.ok && data?.mfaRequired && data?.mfaToken){
+          toast('2FA required — check your app or SMS','info');
+          openMfa(data.mfaToken);
+        } else if(res.ok && data?.token){
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user || {}));
+          if($('#remember').checked) localStorage.setItem('rememberEmail', email);
+          else localStorage.removeItem('rememberEmail');
+          toast('Welcome back!','success');
+          setTimeout(()=> window.location.href = 'dashboard.html', 300);
+        } else {
+          const attempts = incFail();
+          toast(data?.message || 'Login failed', 'error');
+          if(attempts>=5) toast('Temporarily locked due to failed attempts','error');
+        }
+      }catch(err){
+        toast('Network error — please try again','error');
+      }finally{
+        submit.disabled = false;
+        submit.innerHTML = '<i data-feather="log-in"></i> Log in';
+        feather.replace();
+      }
+    });
+
+    // ---------- Keyboard UX ----------
+    document.addEventListener('keydown', (e)=>{
+      // Ctrl/Cmd+K focuses email
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='k'){
+        e.preventDefault(); $('#email').focus();
+      }
+    });
+
+    // ---------- Social Placeholders ----------
+    $('#loginGoogle').addEventListener('click', ()=> toast('Google sign-in coming soon','info'));
+    $('#loginApple').addEventListener('click', ()=> toast('Apple sign-in coming soon','info'));
+  </script>
+</body>
+</html>

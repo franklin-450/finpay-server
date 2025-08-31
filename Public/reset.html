@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Reset Password - Fintech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #f2f4f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .reset-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .reset-box h2 {
+            margin-bottom: 24px;
+            font-weight: 800;
+            color: #1e73e7;
+        }
+
+        .reset-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .reset-box input:focus {
+            border-color: #1e73e7;
+        }
+
+        .reset-box button {
+            width: 100%;
+            padding: 12px;
+            background: #1e73e7;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .reset-box button:hover {
+            background: #155fd1;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer a {
+            color: #1e73e7;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reset-box">
+        <div class="logo">
+            <img src="asset/word.png" alt="Fintech Logo">
+        </div>
+        <form id="resetForm">
+            <label for="accountNo">Your Account No.</label>
+            <input type="text" id="accountNo" placeholder="Account No. starting AC" required />
+            <label for="newPassword">Enter New Password</label>
+            <input type="password" id="newPassword" placeholder="New Password" required />
+            <button type="submit">Reset Password</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const accountNo = document.getElementById('accountNo').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+
+
+            const res = await fetch('http://localhost:3000/api/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accountNo, newPassword })
+            });
+
+            const data = await res.json();
+            alert(data.message);
+            if (data.success) window.location.href = "login.html";
+        });
+    </script>
+</body>
+
+</html>

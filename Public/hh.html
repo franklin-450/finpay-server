@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fintech Super App — Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    :root{
+      --bg-1:#081028; --bg-2:#072338; --accent-1:#0a3c7d; --accent-2:#00adef;
+      --glass: rgba(255,255,255,0.06); --card:#ffffff; --muted:#9aa4b2; --success:#2fa36b; --danger:#e5484d;
+      --radius:14px; --max-width:1040px; --container-padding:22px;
+    }
+    body{margin:0;height:100%;font-family:Inter,sans-serif;color:#0b2540;background:linear-gradient(135deg,var(--bg-1),var(--bg-2));}
+    .wrap{max-width:var(--max-width);margin:36px auto;padding:var(--container-padding);display:grid;grid-template-columns:1fr 520px;gap:28px;align-items:stretch}
+    @media(max-width:980px){.wrap{grid-template-columns:1fr;gap:18px;padding:16px}}
+
+    .panel{border-radius:20px;padding:28px;background:linear-gradient(160deg,rgba(10,60,125,0.95),rgba(0,173,239,0.8));box-shadow:0 24px 70px rgba(2,6,23,0.28);color:#fff;position:relative;overflow:hidden}
+    .logo{display:flex;gap:14px;align-items:center}
+    .logo .mark{width:56px;height:56px;background:#fff;color:var(--accent-1);border-radius:12px;display:grid;place-items:center;font-weight:800}
+    .hero{margin-top:18px}
+    h1{margin:6px 0 10px;font-size:28px;line-height:1.02}
+    p.lead{opacity:0.95;line-height:1.6}
+    .features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+    .chip{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.08);font-weight:600}
+
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 18px 60px rgba(2,6,23,0.12);overflow:hidden}
+    .card .head{padding:20px;font-weight:700;border-bottom:1px solid rgba(2,6,23,0.06);display:flex;justify-content:space-between;align-items:center}
+    .steps{display:flex;gap:8px;font-size:13px;color:var(--muted)}
+    .steps span.active{color:var(--accent-2);font-weight:600}
+
+    .card .body{padding:20px;}
+    form{display:grid;gap:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:520px){.row{grid-template-columns:1fr}}
+    label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+    .input-wrap{position:relative}
+    input,select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(15,23,42,0.08);background:transparent;font-size:14px}
+    .note{font-size:12px;color:var(--muted)}
+
+    .btn-primary{padding:12px;border:none;border-radius:10px;font-weight:700;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#fff;cursor:pointer;transition:0.2s}
+    .btn-primary:hover{opacity:0.9;transform:translateY(-1px)}
+    .btn-row{display:flex;justify-content:space-between;gap:10px}
+    .btn-secondary{padding:12px;border:none;border-radius:10px;font-weight:600;background:#f5f7fa;cursor:pointer}
+
+    .strength{display:flex;gap:6px;margin-top:6px}
+    .bar{flex:1;height:6px;border-radius:6px;background:#e6eef9}
+    .bar.fill-1{background:#f17d7d}
+    .bar.fill-2{background:#f6b26b}
+    .bar.fill-3{background:#8fd17f}
+    .bar.fill-4{background:var(--success)}
+
+    .msg{padding:10px;border-radius:10px;text-align:center;font-weight:600}
+    .msg.error{background:rgba(229,72,77,0.08);color:var(--danger)}
+    .msg.success{background:rgba(47,163,107,0.12);color:var(--success)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel">
+      <div class="logo"><div class="mark">FS</div><div><div style="font-weight:800">Fintech Super App</div><div class="note">Payments · Banking · Invest</div></div></div>
+      <div class="hero">
+        <h1>Future-ready banking</h1>
+        <p class="lead">Borderless payments, global investments, and smart wallets — secure onboarding designed for trust and growth.</p>
+      </div>
+      <div class="features">
+        <div class="chip"><i data-feather="credit-card"></i>Multi-currency wallet</div>
+        <div class="chip"><i data-feather="shield"></i>Bank-grade security</div>
+        <div class="chip"><i data-feather="trending-up"></i>Invest globally</div>
+        <div class="chip"><i data-feather="bell"></i>Real-time alerts</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="head">
+        <div>Create Account</div>
+        <div class="steps"><span id="stepLabel">Step 1 of 4</span></div>
+      </div>
+      <div class="body">
+        <form id="signupForm">
+          <!-- Step 1: Personal info -->
+          <div class="step" data-step="1">
+            <div class="row">
+              <div><label>First name</label><input id="firstName" name="firstName" required></div>
+              <div><label>Last name</label><input id="lastName" name="lastName" required></div>
+            </div>
+            <div><label>Country</label>
+              <select id="country" name="country" required>
+                <option value="">Select country</option>
+                <option value="KE" data-code="+254">Kenya</option>
+                <option value="NG" data-code="+234">Nigeria</option>
+                <option value="ZA" data-code="+27">South Africa</option>
+                <option value="US" data-code="+1">United States</option>
+                <option value="IN" data-code="+91">India</option>
+              </select>
+            </div>
+            <div><label>Identification number</label><input id="idNumber" name="idNo" required></div>
+            <div><label>Occupation (optional)</label><input id="occupation" name="occupation" placeholder="e.g. Software Engineer"></div>
+          </div>
+
+          <!-- Step 2: Contact -->
+          <div class="step" data-step="2" style="display:none">
+            <div><label>Phone</label><input id="phone" name="phoneNo" placeholder="+254712345678" required></div>
+            <div><label>Email</label><input id="email" name="email" type="email" placeholder="you@example.com" required></div>
+            <div><label>Referral code (optional)</label><input id="referral" name="referral" placeholder="Enter code if you have one"></div>
+          </div>
+
+          <!-- Step 3: Security -->
+          <div class="step" data-step="3" style="display:none">
+            <div><label>Password</label><input id="password" name="password" type="password" required></div>
+            <div class="strength"><div id="s1" class="bar"></div><div id="s2" class="bar"></div><div id="s3" class="bar"></div><div id="s4" class="bar"></div></div>
+            <div><label>Confirm password</label><input id="confirmPassword" type="password" required></div>
+            <label><input type="checkbox" id="terms" required> I agree to the <a href="#">Terms</a></label>
+          </div>
+
+          <!-- Step 4: Review -->
+          <div class="step" data-step="4" style="display:none">
+            <div id="review"></div>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn-secondary" id="prevBtn">Back</button>
+            <button type="button" class="btn-primary" id="nextBtn">Next</button>
+          </div>
+          <div id="formMsg"></div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+<script>
+ feather.replace();
+ let step=1;
+ const steps=document.querySelectorAll('.step');
+ const stepLabel=document.getElementById('stepLabel');
+ const prevBtn=document.getElementById('prevBtn');
+ const nextBtn=document.getElementById('nextBtn');
+ const formMsg=document.getElementById('formMsg');
+ function showStep(n){steps.forEach(s=>s.style.display=s.dataset.step==n?'block':'none');stepLabel.textContent=`Step ${n} of 4`;prevBtn.style.display=n==1?'none':'inline-block';nextBtn.textContent=n==4?'Submit':'Next';}
+ showStep(step);
+
+ prevBtn.onclick=()=>{if(step>1){step--;showStep(step)}};
+ nextBtn.onclick=()=>{
+   if(step<4){step++;if(step==4)fillReview();showStep(step);}else submitForm();
+ };
+ function passwordScore(p){let s=0;if(p.length>=8)s++;if(/[A-Z]/.test(p))s++;if(/[0-9]/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;return s;}
+ document.getElementById('password').addEventListener('input',e=>{
+   const bars=['s1','s2','s3','s4'].map(id=>document.getElementById(id));
+   bars.forEach(b=>b.className='bar');
+   const sc=passwordScore(e.target.value);
+   for(let i=0;i<sc;i++)bars[i].classList.add('fill-'+(i+1));
+ });
+ function fillReview(){
+   const review=document.getElementById('review');
+   review.innerHTML=`<h3>Review details</h3>
+   <p><b>Name:</b> ${firstName.value} ${lastName.value}</p>
+   <p><b>Country:</b> ${country.value}</p>
+   <p><b>ID:</b> ${idNumber.value}</p>
+   <p><b>Phone:</b> ${phone.value}</p>
+   <p><b>Email:</b> ${email.value}</p>
+   <p><b>Occupation:</b> ${occupation.value}</p>
+   <p><b>Referral:</b> ${referral.value}</p>`;
+ }
+ async function submitForm(){
+   formMsg.innerHTML='Processing...';
+   const payload={firstName:firstName.value,lastName:lastName.value,country:country.value,idNo:idNumber.value,occupation:occupation.value,phoneNo:phone.value,email:email.value,password:password.value,referral:referral.value};
+   if(password.value!==confirmPassword.value){formMsg.innerHTML='<div class="msg error">Passwords do not match</div>';return;}
+   try{
+     const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+     if(res.ok){formMsg.innerHTML='<div class="msg success">Welcome! Redirecting...</div>';setTimeout(()=>location='dashboard.html',1000)}
+     else formMsg.innerHTML='<div class="msg error">Registration failed</div>';
+   }catch{formMsg.innerHTML='<div class="msg error">Network error</div>'}
+ }
+</script>
+</body>
+</html>

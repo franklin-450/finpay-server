@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Fintech Super App — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+<style>
+:root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --muted:#7b8aa3;
+    --accent-1:#0a3c7d;
+    --accent-2:#00adef;
+    --glass:rgba(255,255,255,0.6);
+    --text:#0b2540;
+    --font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+}
+
+[data-theme="dark"]{
+    --bg:#071127;
+    --card:#0d162e;
+    --muted:#9aa4b2;
+    --accent-1:#5da6ff;
+    --accent-2:#7be0ff;
+    --text:#f0f2f7;
+}
+
+[data-font="sans"]{ --font:'Inter',system-ui,Segoe UI,Arial; }
+[data-font="serif"]{ --font:'Merriweather',serif; }
+[data-font="mono"]{ --font:'Fira Code',monospace; }
+
+*{ box-sizing:border-box; }
+html,body{
+    height:100%; 
+    margin:0; 
+    font-family:var(--font); 
+    background:var(--bg); 
+    color:var(--text);
+}
+.card-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    transition: opacity 0.4s ease;
+  }
+  
+
+/* Layout */
+.layout{
+    display:grid; 
+    grid-template-columns:260px 1fr; 
+    gap:24px; 
+    min-height:100vh;
+}
+.sidebar{
+    background:linear-gradient(180deg,rgba(8,15,30,0.98),rgba(8,12,24,0.98)); 
+    color:#fff; 
+    padding:20px;
+}
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+}
+.brand .logo{
+    width:44px;
+    height:44px;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    color:#fff;
+}
+.brand h3{ margin:0; font-size:18px; }
+.nav-section{ margin-top:14px; }
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 12px;
+    border-radius:10px;
+    color:rgba(255,255,255,0.92);
+    cursor:pointer;
+}
+.nav-item:hover{ background:rgba(255,255,255,0.03); }
+.nav-item.active{
+    background:rgba(255,255,255,0.06);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.nav-foot{
+    position:absolute;
+    left:20px;
+    bottom:20px;
+    color:rgba(255,255,255,0.6);
+    font-size:13px;
+}
+
+/* Main content */
+.main{ padding:28px 32px; }
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+.search{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--card);
+    padding:8px 12px;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(2,6,23,0.06);
+}
+.search input{
+    border:none;
+    outline:none;
+    background:transparent;
+    font-size:14px;
+}
+.top-actions{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+.icon-btn{
+    background:var(--card);
+    border-radius:10px;
+    padding:10px;
+    box-shadow:0 6px 18px rgba(2,6,23,0.06);
+    cursor:pointer;
+}
+
+/* Dashboard grid */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:18px;
+    margin-top:22px;
+}
+.card{
+    background:var(--card);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 10px 30px rgba(12,18,30,0.06);
+}
+.col-4{ grid-column:span 4; }
+.col-8{ grid-column:span 8; }
+.col-6{ grid-column:span 6; }
+.col-12{ grid-column:span 12; }
+
+.balance-large{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+.balance-large h1{ margin:0; font-size:28px; }
+.balance-actions{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+}
+.btn{
+    padding:10px 14px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+}
+.btn.primary{
+    background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    color:#fff;
+}
+.btn.ghost{
+    background:transparent;
+    border:1px solid rgba(10,15,30,0.06);
+}
+
+/* Table */
+table{ width:100%; border-collapse:collapse; }
+th,td{
+    padding:10px 8px;
+    text-align:left;
+    border-bottom:1px solid rgba(2,6,23,0.04);
+    font-size:14px;
+}
+th{ color:var(--muted); font-weight:600; }
+
+/* Responsive */
+@media (max-width:1100px){ .layout{grid-template-columns:220px 1fr;} }
+@media (max-width:900px){ .layout{grid-template-columns:1fr;} .sidebar{position:relative;width:100%;} }
+.sidebar .settings-entry{ display:flex; align-items:center; justify-content:space-between; }
+
+#modalOverlay {
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(8px); /* This is the blur effect */
+    background: rgba(0, 0, 0, 0.4); /* Slight dark overlay */
+    z-index: 1000;
+    display: none;
+}
+
+.modal-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 90%;
+    padding: 20px;
+    z-index: 1001;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-card.open {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+.modal-card {
+    background: rgba(255, 255, 255, 0.85); /* Light mode: frosted glass look */
+    color: #222;
+}
+[data-theme="dark"] .modal-card {
+    background: rgba(34, 34, 34, 0.85); /* Dark mode frosted glass */
+    color: #eee;
+}
+
+
+
+/* Modal content */
+.modal-grid{ display:grid; grid-template-columns:220px 1fr; gap:0; min-height:320px; }
+.modal-side{
+    padding:20px;
+    border-right:1px solid rgba(0,0,0,0.06);
+    background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+    border-top-left-radius:14px;
+    border-bottom-left-radius:14px;
+}
+.modal-side .settings-tab{
+    padding:12px 10px;
+    margin-bottom:8px;
+    border-radius:8px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:var(--muted);
+}
+.modal-side .settings-tab.active{
+    background:rgba(0,0,0,0.05);
+    color:var(--text);
+    font-weight:600;
+}
+.modal-main{ padding:20px; }
+
+/* Inputs inside modal */
+.settings-section{ display:none; }
+.settings-row{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:12px;
+}
+.settings-row label{
+    min-width:140px;
+    color:var(--muted);
+}
+.settings-row input, .settings-row select{
+    flex:1;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(0,0,0,0.08);
+    background:transparent;
+    color:var(--text);
+}
+.settings-actions{ display:flex; gap:8px; margin-top:14px; }
+.btn-ghost{
+    background:transparent;
+    border:1px solid rgba(0,0,0,0.08);
+    padding:10px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    color:var(--text);
+}
+.btn-primary{
+    background:linear-gradient(90deg,#3a7bd5,#00d2ff);
+    color:white;
+    padding:10px 14px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+}
+
+/* Responsive modal */
+@media (max-width:760px){
+    .modal-card{ width:92vw; }
+    .modal-grid{ grid-template-columns:1fr; }
+    .modal-side{
+        border-right:none;
+        border-bottom:1px solid rgba(0,0,0,0.06);
+        border-top-left-radius:14px;
+        border-top-right-radius:14px;
+    }
+}
+[data-theme="dark"] #profilePopup {
+    background: #2b2b2b;
+    color: #eee;
+}
+
+</style>
+    
+</head>
+<body>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+  <!---->      <div class="lgo"id="lgoEl"><img src="asset/finepay.png" style="
+                width: 80px;
+                text-align: center;
+                margin-bottom: 20px;"></div>
+            <div>
+                <h3>FinPay</h3>
+                <div style="font-size:10px;opacity:.6">Banking • Payments • Invest</div>
+            </div>
+        </div>
+
+        <nav class="nav-section">
+            <div class="nav-item active" data-target="dashboard" onclick="switchView('dashboard', this)"><i data-feather="grid"></i> Dashboard</div>
+            <div class="nav-item" data-target="transactions" onclick="switchView('transactions', this)"><i data-feather="list"></i> Transactions</div>
+            <div class="nav-item" data-target="payments" onclick="switchView('payments', this)"><i data-feather="send"></i> Payments</div>
+            <div class="nav-item" data-target="cards" onclick="switchView('cards', this)"><i data-feather="credit-card"></i> Cards</div>
+            <div class="nav-item" data-target="invest" onclick="switchView('invest', this)"><i data-feather="bar-chart-2"></i> Investments</div>
+            <div class="nav-item" data-target="loans" onclick="switchView('loans', this)"><i data-feather="layers"></i> Loans</div>
+            <div class="nav-item" data-target="support" onclick="switchView('support', this)"><i data-feather="help-circle"></i> Support</div>
+            <div class="nav-item" onclick="openSettingsModal()"><i data-feather="settings"></i> Settings</div>
+        </nav>
+        
+
+        <div class="nav-foot">© FinPay • v0.1</div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div style="display:flex;gap:12px;align-items:center;width:100%">
+                <div class="search"> <i data-feather="search"></i> <input placeholder="Search transactions, people, invoices..." id="globalSearch"></div>
+                <div class="top-actions">
+                    <div class="icon-btn" title="Notifications" id="notifBtn"><i data-feather="bell"></i></div>
+                    <div class="icon-btn" title="Profile" id="profileBtn"><i data-feather="user"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Views container -->
+        <section id="views">
+
+            <!-- Dashboard view -->
+            <div id="view-dashboard" class="view">
+                <div class="grid">
+                    <div class="card col-4">
+                        <div class="balance-large">
+                            <div style="color:var(--muted);font-weight:700">Total Balance</div>
+                            <h1 id="mainBalance">$0.00</h1>
+                            <div class="balance-actions">
+                                <button class="btn primary" onclick="window.open('add.html')">+ Add Money</button>
+                                <button class="btn ghost" onclick="openQuick('transfer')">Transfer</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card col-8">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <div style="font-weight:700">Activity</div>
+                            <div style="color:var(--muted);font-size:13px">Last 30 days</div>
+                        </div>
+                        <div class="chart" id="chartPlaceholder">[Balance chart placeholder — connect chart library]</div>
+                    </div>
+
+                    <div class="card col-6">
+                        <div style="font-weight:700;margin-bottom:8px">Quick Actions</div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap">
+                            <button class="btn primary" onclick="openQuick('paybill')"><i data-feather="file-text"></i> Pay Bill</button>
+                            <button class="btn" style="background:linear-gradient(90deg,#28b463,#07a26e)" onclick="openQuick('airtime')"><i data-feather="phone"></i> Buy Airtime</button>
+                            <button class="btn" style="background:linear-gradient(90deg,#ff9a66,#ff5e62)" onclick="openQuick('merchant')"><i data-feather="shopping-cart"></i> Merchant</button>
+                        </div>
+                    </div>
+
+                    <div class="card col-6">
+                        <div style="font-weight:700;margin-bottom:8px">Recent Transactions</div>
+                        <div style="max-height:220px;overflow:auto">
+                            <table id="txTable"><thead><tr><th>Date</th><th>Desc</th><th>Amount</th></tr></thead><tbody><tr><td>—</td><td>No data</td><td>—</td></tr></tbody></table>
+                        </div>
+                    </div>
+
+                    <div class="card col-12">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <div style="font-weight:700">Portfolio Snapshot</div>
+                            <div style="color:var(--muted);font-size:13px">Last updated: <span id="portfolioUpdated">—</span></div>
+                        </div>
+                        <div style="display:flex;gap:18px;align-items:center">
+                            <div style="flex:1">[Investments widget placeholder — add charts]</div>
+                            <div style="width:220px">Total invested: <div style="font-weight:800;font-size:18px" id="investTotal">$0.00</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions view -->
+            <div id="view-transactions" class="view" style="display:none">
+                <div class="card col-12" style="margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div style="font-weight:700">All Transactions</div>
+                        <div><input id="filterSearch" placeholder="Search transactions" style="padding:8px 10px;border-radius:8px;border:1px solid #e6eef6"></div>
+                    </div>
+                </div>
+                <div class="card col-12">
+                    <table id="allTxTable"><thead><tr><th>Date</th><th>Reference</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr><td colspan="5" style="color:var(--muted)">No transactions yet</td></tr></tbody></table>
+                </div>
+            </div>
+
+            <!-- Payments view -->
+            <div id="view-payments" class="view" style="display:none">
+                <div class="card col-8">
+                    <h3>Send Payment</h3>
+                    <div style="margin-top:12px">
+                        <label>Recipient phone or email</label>
+                        <input id="payTo" style="padding:10px 12px;border-radius:8px;border:1px solid #e6eef6;width:100%">
+                    </div>
+                    <div style="margin-top:12px;display:flex;gap:10px">
+                        <div style="flex:1"><label>Amount</label><input id="payAmount" type="number" style="padding:10px 12px;border-radius:8px;border:1px solid #e6eef6;width:100%"></div>
+                        <div style="width:160px"><label>Currency</label><select id="payCurrency" style="padding:10px;border-radius:8px;width:100%"><option>USD</option><option>KES</option></select></div>
+                    </div>
+                    <div style="margin-top:12px"><button class="btn primary" onclick="sendPayment()">Send</button></div>
+                </div>
+                <div class="card col-4">
+                    <h4>Recent recipients</h4>
+                    <div id="recipients" style="margin-top:12px;color:var(--muted)">No recent recipients</div>
+                </div>
+            </div>
+
+            <!-- Cards, Invest, Loans, Support views placeholders -->
+            <div id="view-cards" class="view" style="display:none"><div class="card col-12"><h3>Cards</h3><p style="color:var(--muted)">Manage virtual and physical cards — coming soon.</p></div></div>
+            <div id="view-invest" class="view" style="display:none"><div class="card col-12"><h3>Investments</h3><p style="color:var(--muted)">Invest in bonds, ETFs, crypto — connect to APIs to populate.</p></div></div>
+            <div id="view-loans" class="view" style="display:none"><div class="card col-12"><h3>Loans</h3><p style="color:var(--muted)">Loan offers & repayments.</p></div></div>
+            <div id="view-support" class="view" style="display:none"><div class="card col-12"><h3>Support</h3><p style="color:var(--muted)">Open a ticket or chat with support (placeholder).</p></div></div>
+
+        </section>
+    </main>
+</div>
+    <!-- Modal overlay + card -->
+    <div id="modalOverlay"></div>
+    <div id="settingsModal" class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="modal-grid">
+            <div class="modal-side">
+                <div style="font-weight:800;margin-bottom:8px">Settings</div>
+                <div class="settings-tab active" data-section="account"><i data-feather="user"></i> Account</div>
+                <div class="settings-tab" data-section="privacy"><i data-feather="shield"></i> Privacy</div>
+                <div class="settings-tab" data-section="general"><i data-feather="sliders"></i> General</div>
+                <div class="settings-tab" data-section="logout"><i data-feather="log-out"></i> Logout User</div>
+            </div>
+            <div class="modal-main">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <div id="settingsTitle" style="font-weight:800">Account</div>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn-ghost" onclick="closeSettingsModal()">Close</button>
+                    </div>
+                </div>
+
+
+                <!-- Account -->
+                <div id="sec-account" class="settings-section">
+                    <h4>Edit Profile</h4>
+                    <div class="settings-row"><label>First Name</label><input id="editFirstName" type="text" placeholder="First name"></div>
+                    <div class="settings-row"><label>Last Name</label><input id="editLastName" type="text" placeholder="Last name"></div>
+                    <div class="settings-row"><label>Email</label><input id="editEmail" type="email" placeholder="email@domain.com"></div>
+                    <div class="settings-row"><label>Phone</label><input id="editPhoneNo" type="tel" placeholder="0700 000 000"></div>
+                    <div class="settings-row"><label>ID No.</label><input id="editIdNo" type="text" placeholder="ID / Passport"></div>
+                    <div class="settings-row"><label>Account No.</label><input id="editAcc" type="text" readonly></div>
+                    <div class="settings-row"><label>Password</label><input id="editPassword" type="paword" placeholder="••••••••"></div>
+
+                    <div class="settings-actions">
+                        <button id="saveProfileBtn" class="btn-primary">Save Profile</button>
+                        <button class="btn-ghost" onclick="showSection('account')">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Privacy -->
+                <div id="sec-privacy" class="settings-section">
+                    <h4>Privacy</h4>
+                    <p style="color:var(--muted)">Privacy features coming soon. Placeholder for GDPR / consent, data export, connected apps, permissions.</p>
+                </div>
+
+                <!-- General -->
+                <div id="sec-general" class="settings-section">
+                    <h4>General Settings</h4>
+                    <div class="settings-row"><label>Theme</label><div style="display:flex;align-items:center;gap:12px"><label style="font-size:13px; color:var(--muted)"><input id="themeToggle" type="checkbox"> Dark mode</label></div></div>
+                    <div class="settings-row"><label>Font size</label><input id="fontSizeRange" type="range" min="14" max="20" value="16"></div>
+                    <div class="settings-row"><label>Language</label><select id="languageSelect"><option value="en">English</option><option value="sw">Swahili</option><option value="fr">Français</option><option value="ar">العربية</option></select></div>
+                    <div class="settings-row"><label>Notifications</label><label style="font-size:13px;color:var(--muted)"><input id="notifToggle" type="checkbox"> Enable push & email</label></div>
+                    <div class="settings-row"><label>Currency</label><select id="currencySelect"><option>USD</option><option>KES</option><option>EUR</option><option>GBP</option></select></div>
+                    <div class="settings-row"><label>Face Lock</label><label style="font-size:13px;color:var(--muted)"><input id="faceLock" type="checkbox"> Enable</label></div>
+                    <div class="settings-row"><label>Fingerprint</label><label style="font-size:13px;color:var(--muted)"><input id="fingerprint" type="checkbox"> Enable</label></div>
+                    <div class="settings-row"><label>Two-factor</label><label style="font-size:13px;color:var(--muted)"><input id="twoFa" type="checkbox"> Enable 2FA (SMS/Authenticator)</label></div>
+                    <div style="margin-top:12px;color:var(--muted);font-size:13px">Transaction alerts: configure thresholds & channels (email/SMS/in-app) — coming in v2.</div>
+                </div>
+
+                <!-- Logout -->
+                <div id="sec-logout" class="settings-section">
+                    <h4>Logout</h4>
+                    <p style="color:var(--muted)">Click below to securely log out of the application.</p>
+                    <div style="margin-top:12px"><button id="logoutBtn" class="btn-primary">Log out now</button></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="script.js"></script>
+    
+<script>
+    feather.replace();
+document.querySelectorAll('.settings-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.settings-section').forEach(sec => sec.style.display = "none");
+    document.getElementById('sec-' + tab.dataset.section).style.display = "block";
+  });
+});
+
+
+    </script>
+        
+</body>
+</html>
