@@ -11,8 +11,19 @@ const jwt = require('jsonwebtoken');
 dotenv.config();
 
 const app = express();
+// Serve static HTML, CSS, JS files
+app.use(express.static(path.join(__dirname, 'public')));
+
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'E387BD77931EC6A5BD18582583CD9';
+// Optional: serve HTML without .html extension
+app.get('/:page', (req, res, next) => {
+    const filePath = path.join(__dirname, 'public', `${req.params.page}.html`);
+    res.sendFile(filePath, (err) => {
+        if (err) next(); // fall through if file not found
+    });
+});
+
 
 
 // 📦 SQLite setup
