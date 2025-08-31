@@ -16,9 +16,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'E387BD77931EC6A5BD18582583CD9';
 
 
 // 📦 SQLite setup
-const db = new sqlite3.Database('./users.db', (err) => {
-    if (err) return console.error(err.message);
-    console.log('✅ SQLite database connected');
+const db = new sqlite3.Database('/opt/render/project/data/users.db', (err) => {
+    if (err) console.error(err.message);
+    else console.log('✅ SQLite database connected');
 
     db.serialize(() => {
         // Create users table
