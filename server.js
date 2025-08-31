@@ -26,11 +26,15 @@ app.get('/:page', (req, res, next) => {
 
 
 
-// 📦 SQLite setup
-const db = new sqlite3.Database('/opt/render/project/data/users.db', (err) => {
-    if (err) console.error(err.message);
-    else console.log('✅ SQLite database connected');
+// 📦 SQLite set
 
+// Open an in-memory DB instead of file
+const db = new sqlite3.Database(':memory:', (err) => {
+  if (err) {
+    console.error('❌ Error opening SQLite DB:', err.message);
+  } else {
+    console.log('✅ Connected to in-memory SQLite database');
+  }
     db.serialize(() => {
         // Create users table
         db.run(`CREATE TABLE IF NOT EXISTS users (
